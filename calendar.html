@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en" manifest="calendar.appcache">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Calendar">
+<meta name="format-detection" content="telephone=no">
+<link rel="apple-touch-icon" href="calendar-icon.png">
+<title>Family Calendar</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:rgba(0,0,0,0)}
+html,body{height:100%;overflow:hidden;background:#F2F2F7;color:#1C1C1E;font-family:-apple-system,"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:15px;-webkit-text-size-adjust:100%}
+button{font-family:inherit;font-size:inherit;border:0;background:none;color:inherit;cursor:pointer;outline:none}
+input,select,textarea{font-family:inherit;font-size:17px;color:#1C1C1E;outline:none;border:0;border-radius:0;-webkit-appearance:none}
+.flex{display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center}
+.grow{-webkit-flex:1;flex:1;min-width:0}
+.pressed{opacity:.55}
+.scroll{overflow-y:auto;-webkit-overflow-scrolling:touch}
+
+/* ---------- top bar ---------- */
+#top{position:absolute;top:0;left:0;right:0;height:108px;background:#fff;border-bottom:1px solid #D8D8DE;z-index:5}
+.r1{height:56px;padding:0 12px;position:relative}
+.btn{height:38px;padding:0 14px;border-radius:10px;background:#F2F2F7;font-weight:600;font-size:16px;color:#E5484D}
+.ibtn{width:42px;height:38px;border-radius:10px;font-size:30px;line-height:34px;color:#E5484D;margin-left:4px}
+.seg{position:absolute;left:50%;top:9px;width:320px;margin-left:-160px;height:38px;background:#EEEEF0;border-radius:10px;padding:3px}
+.seg button{-webkit-flex:1;flex:1;height:32px;border-radius:8px;font-weight:600;font-size:15px;color:#3A3A3C}
+.seg button.sel{background:#fff;color:#1C1C1E;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.addbtn{width:40px;height:40px;border-radius:20px;background:#E5484D;color:#fff;font-size:30px;line-height:38px;margin-left:10px;font-weight:300}
+.r2{height:52px;padding:0 18px}
+#ttl{font-size:30px;font-weight:700;letter-spacing:-.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#ttl span{color:#E5484D;font-weight:500}
+#banner{display:none;background:#FFF4CE;color:#7A5B00;font-size:14px;padding:6px 18px;position:absolute;top:108px;left:0;right:0;z-index:6}
+
+#view{position:absolute;top:108px;left:0;right:0;bottom:0;background:#fff}
+
+/* ---------- month ---------- */
+.mo{position:absolute;top:0;left:0;right:0;bottom:0}
+.mleft{position:absolute;top:0;left:0;bottom:0;right:310px}
+.mhead{height:28px;border-bottom:1px solid #E5E5EA}
+.mhead div{-webkit-flex:1;flex:1;text-align:center;font-size:12px;font-weight:600;color:#8E8E93;text-transform:uppercase;letter-spacing:.5px}
+.mgrid{position:absolute;top:28px;left:0;right:0;bottom:0;display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column}
+.mrow{-webkit-flex:1;flex:1;display:-webkit-flex;display:flex;min-height:0}
+.mcell{-webkit-flex:1;flex:1;min-width:0;border-right:1px solid #EDEDF0;border-bottom:1px solid #EDEDF0;overflow:hidden;padding-top:3px;position:relative}
+.mcell:last-child{border-right:0}
+.mcell.other{background:#FAFAFB}
+.mcell.other .mnum{color:#B5B5BB}
+.mcell.sel{background:#F1F6FF}
+.mnum{display:inline-block;margin-left:5px;min-width:24px;height:24px;line-height:24px;border-radius:12px;text-align:center;font-size:15px;font-weight:500;padding:0 4px;margin-bottom:2px}
+.mcell.sel .mnum{background:#1C1C1E;color:#fff}
+.mnum.today,.mcell.sel .mnum.today{background:#E5484D;color:#fff;font-weight:700}
+.chip{height:20px;line-height:20px;margin:0 3px 1px;padding:0 5px;border-radius:4px;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip i{display:inline-block;width:7px;height:7px;border-radius:4px;margin-right:4px;vertical-align:1px}
+.chip em{font-style:normal;color:#8E8E93;margin-right:3px}
+.chip.ad{font-weight:600}
+.more{font-size:12px;color:#8E8E93;padding-left:8px;font-weight:600}
+.dpanel{position:absolute;top:0;right:0;bottom:0;width:310px;border-left:1px solid #E5E5EA;background:#FBFBFC}
+.phead{padding:16px 16px 8px}
+.pday{font-size:22px;font-weight:700}
+.pdate{color:#8E8E93;font-size:15px;margin-top:1px}
+.padd{margin-top:12px;height:40px;width:100%;border-radius:10px;background:#E5484D;color:#fff;font-weight:600;font-size:16px}
+.pitem{margin:8px 12px;background:#fff;border-radius:12px;padding:10px 12px 10px 14px;box-shadow:0 1px 2px rgba(0,0,0,.08);position:relative;-webkit-align-items:flex-start;align-items:flex-start}
+.pitem i{position:absolute;left:0;top:10px;bottom:10px;width:4px;border-radius:2px}
+.pitem b{display:block;font-size:16px;font-weight:600;margin-bottom:2px}
+.pitem span{display:block;font-size:14px;color:#6C6C72}
+.pitem .rep{font-size:12px;color:#8E8E93;margin-top:3px}
+.empty{color:#AEAEB2;text-align:center;padding:30px 10px;font-size:16px}
+@media (orientation:portrait){
+  .mleft{right:0;bottom:250px}
+  .dpanel{top:auto;left:0;width:auto;height:250px;border-left:0;border-top:1px solid #E5E5EA}
+  .phead{padding:12px 16px 4px;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center}
+  .phead .pdate{margin-left:10px;-webkit-flex:1;flex:1}
+  .padd{margin-top:0;width:auto;padding:0 16px}
+}
+
+/* ---------- week / day ---------- */
+.wk{position:absolute;top:0;left:0;right:0;bottom:0}
+.wkhead,.wkall{display:-webkit-flex;display:flex;border-bottom:1px solid #E5E5EA}
+.gut{width:58px;-webkit-flex-shrink:0;flex-shrink:0}
+.wkday{-webkit-flex:1;flex:1;min-width:0;text-align:center;padding:5px 0 6px}
+.wkday span{display:block;font-size:12px;font-weight:600;color:#8E8E93;text-transform:uppercase}
+.wkday b{display:inline-block;min-width:32px;height:32px;line-height:32px;border-radius:16px;font-size:20px;font-weight:500;padding:0 5px}
+.wkday.today b{background:#E5484D;color:#fff;font-weight:700}
+.wkday.today span{color:#E5484D}
+.wkall .gut{font-size:11px;color:#8E8E93;text-align:right;padding:7px 6px 0 0}
+.alld{-webkit-flex:1;flex:1;min-width:0;min-height:30px;border-left:1px solid #EDEDF0;padding:3px 0 2px}
+.alld .chip{height:22px;line-height:22px}
+.wkscroll{position:absolute;left:0;right:0;bottom:0}
+.wkgrid{position:relative;display:-webkit-flex;display:flex;height:1200px}
+.hours{position:relative}
+.hours div{position:absolute;right:7px;font-size:11px;color:#8E8E93;margin-top:-7px;white-space:nowrap}
+.col{-webkit-flex:1;flex:1;min-width:0;position:relative;border-left:1px solid #EDEDF0;background-image:linear-gradient(#EDEDF0 1px,transparent 1px);background-size:100% 50px}
+.col.tcol{background-color:#FFF9F9}
+.blk{position:absolute;border-left:3px solid;border-radius:5px;padding:2px 5px;font-size:12.5px;overflow:hidden;line-height:1.25;z-index:2}
+.blk b{display:block;font-weight:600}
+.blk span{display:block;opacity:.85}
+.blk.short b,.blk.short span{display:inline;margin-right:5px}
+.day .blk{font-size:14px;padding:4px 8px}
+.now{position:absolute;left:-4px;right:0;height:2px;background:#E5484D;z-index:3}
+.now:before{content:"";position:absolute;left:0;top:-4px;width:10px;height:10px;border-radius:5px;background:#E5484D}
+
+/* ---------- list ---------- */
+.list{position:absolute;top:0;left:0;right:0;bottom:0}
+.lgroup{max-width:760px;margin:0 auto}
+.lhead{position:-webkit-sticky;position:sticky;top:0;background:#F7F7F9;padding:8px 20px;font-weight:700;font-size:15px;border-bottom:1px solid #EDEDF0;z-index:2}
+.lhead.today{color:#E5484D}
+.litem{padding:12px 20px;border-bottom:1px solid #F0F0F3;-webkit-align-items:flex-start;align-items:flex-start}
+.litem .lt{width:120px;-webkit-flex-shrink:0;flex-shrink:0;font-size:14px;color:#6C6C72;padding-top:2px}
+.litem i{width:10px;height:10px;border-radius:5px;margin:6px 12px 0 0;-webkit-flex-shrink:0;flex-shrink:0}
+.litem b{display:block;font-size:17px;font-weight:600}
+.litem span{display:block;font-size:14px;color:#6C6C72;margin-top:2px}
+.lmore{display:block;margin:20px auto 40px;height:44px;padding:0 24px;border-radius:12px;background:#F2F2F7;color:#E5484D;font-weight:600;font-size:16px}
+
+/* ---------- sheets ---------- */
+.ov{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.35);z-index:20;display:none}
+.ov.on{display:block}
+.sheet{position:absolute;top:30px;bottom:30px;left:50%;width:600px;margin-left:-300px;background:#F2F2F7;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+@media (orientation:portrait){.sheet{top:40px;bottom:auto;max-height:90%}}
+.shead{position:relative;height:54px;background:#F9F9FB;border-bottom:1px solid #DCDCE0;border-radius:16px 16px 0 0;text-align:center;line-height:54px;font-size:17px;font-weight:600}
+.shead .link{position:absolute;top:8px;height:38px;padding:0 16px;color:#E5484D;font-size:17px}
+.shead .l{left:4px;font-weight:400}.shead .r{right:4px;font-weight:700}
+.sbody{padding:4px 0 20px}
+.group{background:#fff;border-radius:12px;margin:16px 16px 0;overflow:hidden}
+.glabel{font-size:13px;color:#6C6C72;text-transform:uppercase;letter-spacing:.3px;margin:20px 30px -10px}
+.row{min-height:50px;padding:6px 16px;border-bottom:1px solid #EDEDF0}
+.row:last-child{border-bottom:0}
+.row>label{-webkit-flex:1;flex:1;font-size:17px}
+.tin{display:block;width:100%;height:50px;padding:0 16px;border-bottom:1px solid #EDEDF0;background:#fff}
+.tin.big{font-size:20px;font-weight:600}
+.tin:last-child{border-bottom:0}
+.pick{background:#F2F2F7;border-radius:8px;height:36px;padding:0 10px;font-size:17px;margin-left:8px;min-width:150px;text-align:center}
+input.pick[type=time]{min-width:110px}
+select.pick{min-width:200px;text-align:left}
+textarea{display:block;width:100%;height:90px;padding:12px 16px;resize:none;background:#fff}
+.sw{width:52px;height:32px;border-radius:16px;background:#E5E5EA;position:relative;-webkit-transition:background .2s;transition:background .2s}
+.sw:after{content:"";position:absolute;top:2px;left:2px;width:28px;height:28px;border-radius:14px;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.2);-webkit-transition:-webkit-transform .2s;transition:transform .2s}
+.sw.on{background:#34C759}
+.sw.on:after{-webkit-transform:translateX(20px);transform:translateX(20px)}
+.days{padding:8px 12px;-webkit-justify-content:space-between;justify-content:space-between}
+.days button{width:44px;height:44px;border-radius:22px;background:#F2F2F7;font-weight:600;font-size:16px}
+.days button.sel{background:#E5484D;color:#fff}
+.cals{padding:8px 10px;-webkit-flex-wrap:wrap;flex-wrap:wrap}
+.cpill{height:38px;border-radius:19px;padding:0 14px 0 10px;margin:4px;border:2px solid #E5E5EA;font-size:15px;font-weight:600;background:#fff}
+.cpill i{display:inline-block;width:14px;height:14px;border-radius:7px;margin-right:7px;vertical-align:-2px}
+.cpill.sel{color:#fff}
+.danger{display:block;width:calc(100% - 32px);margin:24px 16px 0;height:50px;border-radius:12px;background:#fff;color:#E5484D;font-size:17px;font-weight:600}
+.hide{display:none!important}
+
+/* calendars manager */
+.crow{padding:10px 14px;border-bottom:1px solid #EDEDF0}
+.crow:last-child{border-bottom:0}
+.eye{width:30px;height:30px;border-radius:15px;border:2px solid;color:#fff;font-size:16px;font-weight:700;line-height:26px;text-align:center;-webkit-flex-shrink:0;flex-shrink:0}
+.cname{-webkit-flex:1;flex:1;min-width:0;height:38px;margin:0 10px;font-size:17px;font-weight:600;background:#F7F7F9;border-radius:8px;padding:0 10px}
+.cdel{color:#E5484D;font-size:15px;padding:0 6px;height:38px}
+.dots{margin:10px 0 2px 40px;-webkit-flex-wrap:wrap;flex-wrap:wrap}
+.dots button{width:30px;height:30px;border-radius:15px;margin:0 8px 6px 0;position:relative}
+.dots button.sel:after{content:"";position:absolute;top:-4px;left:-4px;right:-4px;bottom:-4px;border-radius:19px;border:2px solid #1C1C1E}
+.addrow{display:block;width:100%;height:50px;text-align:left;padding:0 16px;color:#E5484D;font-size:17px;font-weight:600}
+.seg2{background:#EEEEF0;border-radius:9px;padding:2px}
+.seg2 button{height:32px;padding:0 14px;border-radius:7px;font-size:15px;font-weight:600;color:#3A3A3C}
+.seg2 button.sel{background:#fff;color:#1C1C1E;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.note{font-size:14px;color:#6C6C72;padding:12px 16px 4px;line-height:1.4}
+.wbtn{display:block;width:100%;height:50px;border-top:1px solid #EDEDF0;color:#007AFF;font-size:17px;text-align:left;padding:0 16px}
+.wbtn.red{color:#E5484D}
+#bArea textarea{height:140px;font-size:13px;font-family:Menlo,Courier,monospace;background:#F7F7F9;border-top:1px solid #EDEDF0;-webkit-user-select:text;user-select:text}
+#bArea a{display:block;height:50px;line-height:50px;padding:0 16px;color:#007AFF;font-size:17px;text-decoration:none;border-top:1px solid #EDEDF0}
+
+/* ask dialog */
+.askbox{position:absolute;top:50%;left:50%;width:380px;margin-left:-190px;-webkit-transform:translateY(-50%);transform:translateY(-50%);background:#fff;border-radius:16px;overflow:hidden;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.askbox h3{font-size:18px;font-weight:700;padding:20px 20px 4px}
+.askbox p{font-size:15px;color:#6C6C72;padding:0 22px 16px;line-height:1.35}
+.askbox button{display:block;width:100%;height:52px;border-top:1px solid #E5E5EA;color:#007AFF;font-size:17px}
+.askbox button.red{color:#E5484D}
+.askbox button.bold{font-weight:700}
+#toast{position:fixed;left:50%;bottom:30px;width:340px;margin-left:-170px;text-align:center;background:rgba(28,28,30,.9);color:#fff;border-radius:14px;padding:12px 16px;font-size:15px;font-weight:600;z-index:40;opacity:0;-webkit-transition:opacity .25s;transition:opacity .25s;pointer-events:none}
+#toast.on{opacity:1}
+</style>
+</head>
+<body>
+<div id="top">
+  <div class="r1 flex">
+    <button class="btn" data-act="today">Today</button>
+    <button class="ibtn" data-act="prev">&#x2039;</button>
+    <button class="ibtn" data-act="next">&#x203A;</button>
+    <div class="seg flex" id="seg">
+      <button data-act="view" data-v="day">Day</button>
+      <button data-act="view" data-v="week">Week</button>
+      <button data-act="view" data-v="month">Month</button>
+      <button data-act="view" data-v="list">List</button>
+    </div>
+    <div class="grow"></div>
+    <button class="btn" data-act="cals">Calendars</button>
+    <button class="addbtn" data-act="add">+</button>
+  </div>
+  <div class="r2 flex"><div id="ttl"></div></div>
+</div>
+<div id="banner"></div>
+<div id="view"></div>
+<div class="ov" id="sheetOv"><div class="sheet scroll" id="sheet"></div></div>
+<div class="ov" id="askOv"><div class="askbox" id="askbox"></div></div>
+<div id="toast"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  (function () {
+    var d = document.createElement('div'); d.classList.toggle('x', false);
+    if (d.classList.contains('x') && window.DOMTokenList) {
+      var orig = DOMTokenList.prototype.toggle;
+      DOMTokenList.prototype.toggle = function (c, f) { if (f === undefined) return orig.call(this, c); if (f) this.add(c); else this.remove(c); return !!f; };
+    }
+  })();
+
+  /* ================= constants ================= */
+  var DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  var DSH = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  var MON = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  var MSH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  var PALETTE = ['#E5484D', '#F76B15', '#F5B400', '#30A46C', '#12A594', '#0090FF', '#3E63DD', '#8E4EC6', '#D6409F', '#A07553', '#8B8D98', '#1E3A5F'];
+  var HH = 50; // pixels per hour in week/day view
+  var KEY = 'famcal.v1';
+
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function uid(p) { return (p || 'e') + Date.now().toString(36) + Math.floor(Math.random() * 1e6).toString(36); }
+
+  /* ================= storage ================= */
+  function defaults() {
+    return {
+      cals: [
+        { id: 'c1', name: 'Family', color: '#0090FF', on: true },
+        { id: 'c2', name: 'Work', color: '#30A46C', on: true },
+        { id: 'c3', name: 'School', color: '#F76B15', on: true },
+        { id: 'c4', name: 'Kids’ Activities', color: '#8E4EC6', on: true },
+        { id: 'c5', name: 'Birthdays', color: '#D6409F', on: true },
+        { id: 'c6', name: 'Appointments', color: '#E5484D', on: true }
+      ],
+      events: [],
+      set: { weekStart: 0, h24: false, view: 'month', lastCal: 'c1' }
+    };
+  }
+  function valid(o) { return o && o.cals && o.cals.length && o.events && typeof o.events.length === 'number'; }
+  function load() {
+    try {
+      var s = localStorage.getItem(KEY);
+      if (s) { var o = JSON.parse(s); if (valid(o)) { o.set = o.set || {}; if (o.set.weekStart == null) o.set.weekStart = 0; return o; } }
+    } catch (e) {}
+    return defaults();
+  }
+  var db = load();
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(db)); $('banner').style.display = 'none'; }
+    catch (e) {
+      var b = $('banner'); b.style.display = 'block';
+      b.innerHTML = '⚠️ Changes can’t be saved on this iPad right now. If Private Browsing is on in Safari, turn it off.';
+    }
+  }
+
+  /* ================= dates ================= */
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function key(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function parse(k) { var p = k.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+  function addDays(d, n) { return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n); }
+  function diffDays(a, b) { return Math.round((new Date(b.getFullYear(), b.getMonth(), b.getDate()) - new Date(a.getFullYear(), a.getMonth(), a.getDate())) / 864e5); }
+  function today() { var n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); }
+  function startOfWeek(d) { return addDays(d, -((d.getDay() - (db.set.weekStart || 0) + 7) % 7)); }
+  function mins(t) { var p = String(t || '0:0').split(':'); return (+p[0]) * 60 + (+p[1] || 0); }
+  function hhmm(m) { return pad(Math.floor(m / 60)) + ':' + pad(m % 60); }
+  function fmtT(t, compact) {
+    var m = mins(t), h = Math.floor(m / 60), mm = m % 60;
+    if (db.set.h24) return pad(h) + ':' + pad(mm);
+    var h12 = h % 12 || 12;
+    if (compact) return h12 + (mm ? ':' + pad(mm) : '') + (h < 12 ? 'a' : 'p');
+    return h12 + ':' + pad(mm) + (h < 12 ? ' AM' : ' PM');
+  }
+  function hourLabel(h) { if (db.set.h24) return pad(h) + ':00'; return (h % 12 || 12) + (h < 12 ? ' AM' : ' PM'); }
+  function shortDate(k) { var d = parse(k); return DSH[d.getDay()] + ', ' + MSH[d.getMonth()] + ' ' + d.getDate(); }
+
+  /* ================= colours ================= */
+  function rgb(h) { return [parseInt(h.substr(1, 2), 16), parseInt(h.substr(3, 2), 16), parseInt(h.substr(5, 2), 16)]; }
+  function rgba(h, a) { var c = rgb(h); return 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a + ')'; }
+  function deep(h) { var c = rgb(h); return 'rgb(' + Math.round(c[0] * 0.5) + ',' + Math.round(c[1] * 0.5) + ',' + Math.round(c[2] * 0.5) + ')'; }
+  function onColour(h) { var c = rgb(h); return (0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2]) / 255 > 0.66 ? '#1C1C1E' : '#fff'; }
+  function calById(id) { for (var i = 0; i < db.cals.length; i++) if (db.cals[i].id === id) return db.cals[i]; return null; }
+  function calOf(ev) { return calById(ev.cal) || db.cals[0]; }
+  function evById(id) { for (var i = 0; i < db.events.length; i++) if (db.events[i].id === id) return db.events[i]; return null; }
+
+  /* ================= repeating events ================= */
+  // returns the start dates (as keys) of every occurrence of ev that touches [from, to]
+  function occs(ev, from, to) {
+    var out = [], s = parse(ev.date), span = Math.max(0, diffDays(s, parse(ev.end || ev.date)));
+    var r = ev.rep, until = r && r.u ? parse(r.u) : null, ex = ev.ex || [];
+    var lo = addDays(from, -span), d, guard = 0;
+    var push = function (x) {
+      if (x < lo || x > to || x < s) return;
+      if (until && x > until) return;
+      var k = key(x); if (ex.indexOf(k) >= 0) return;
+      out.push(k);
+    };
+    if (!r || !r.f || r.f === 'none') { push(s); return out; }
+    var n = Math.max(1, r.i || 1);
+    if (r.f === 'daily') {
+      var k0 = Math.max(0, Math.ceil(diffDays(s, lo) / n));
+      for (d = addDays(s, k0 * n); d <= to && guard < 3000; d = addDays(d, n), guard++) { if (until && d > until) break; push(d); }
+    } else if (r.f === 'weekly') {
+      var days = (r.d && r.d.length) ? r.d.slice().sort() : [s.getDay()];
+      var anchor = addDays(s, -s.getDay());
+      var w0 = Math.max(0, Math.floor(diffDays(anchor, lo) / (7 * n)));
+      for (var w = addDays(anchor, w0 * 7 * n); w <= to && guard < 2000; w = addDays(w, 7 * n), guard++) {
+        if (until && w > until) break;
+        for (var j = 0; j < days.length; j++) push(addDays(w, days[j]));
+      }
+    } else if (r.f === 'monthly') {
+      var dom = s.getDate();
+      var m0 = Math.max(0, (lo.getFullYear() - s.getFullYear()) * 12 + lo.getMonth() - s.getMonth() - 1);
+      m0 -= m0 % n;
+      for (var mi = m0; guard < 1200; mi += n, guard++) {
+        d = new Date(s.getFullYear(), s.getMonth() + mi, dom);
+        if (d.getDate() !== dom) { if (new Date(s.getFullYear(), s.getMonth() + mi, 1) > to) break; continue; }
+        if (d > to || (until && d > until)) break;
+        push(d);
+      }
+    } else if (r.f === 'yearly') {
+      var y0 = Math.max(0, lo.getFullYear() - s.getFullYear() - 1); y0 -= y0 % n;
+      for (var yi = y0; guard < 400; yi += n, guard++) {
+        d = new Date(s.getFullYear() + yi, s.getMonth(), s.getDate());
+        if (d.getMonth() !== s.getMonth()) { if (d > to) break; continue; }
+        if (d > to || (until && d > until)) break;
+        push(d);
+      }
+    }
+    return out;
+  }
+  // all visible event instances touching [from, to]
+  function instances(from, to) {
+    var out = [];
+    for (var i = 0; i < db.events.length; i++) {
+      var ev = db.events[i], cal = calOf(ev);
+      if (!cal.on) continue;
+      var span = Math.max(0, diffDays(parse(ev.date), parse(ev.end || ev.date))), ks = occs(ev, from, to);
+      for (var j = 0; j < ks.length; j++) {
+        var e = key(addDays(parse(ks[j]), span)), e2 = e;
+        if (!ev.all && ev.et === '00:00' && e > ks[j]) e2 = key(addDays(parse(e), -1));
+        out.push({ ev: ev, d: ks[j], e: e, e2: e2, all: !!ev.all, st: ev.st || '00:00', et: ev.et || '00:00', c: cal.color });
+      }
+    }
+    return out;
+  }
+  function sortI(a, b) {
+    if (a.all !== b.all) return a.all ? -1 : 1;
+    if (a.d !== b.d) return a.d < b.d ? -1 : 1;
+    if (!a.all && a.st !== b.st) return a.st < b.st ? -1 : 1;
+    return (a.ev.t || '').toLowerCase() < (b.ev.t || '').toLowerCase() ? -1 : 1;
+  }
+  function byDay(list, from, to) {
+    var map = {};
+    for (var i = 0; i < list.length; i++) {
+      var it = list[i], s = parse(it.d), e = parse(it.e2);
+      for (var d = (s < from ? from : s); d <= e && d <= to; d = addDays(d, 1)) { var k = key(d); (map[k] = map[k] || []).push(it); }
+    }
+    for (var k2 in map) if (map.hasOwnProperty(k2)) map[k2].sort(sortI);
+    return map;
+  }
+  function repText(r) {
+    if (!r || !r.f || r.f === 'none') return '';
+    var t;
+    if (r.f === 'daily') t = 'Every day';
+    else if (r.f === 'weekly') {
+      var d = (r.d || []).slice().sort();
+      if ((r.i || 1) === 1 && d.join() === '1,2,3,4,5') t = 'Every weekday';
+      else { var names = []; for (var i = 0; i < d.length; i++) names.push(DSH[d[i]]); t = ((r.i || 1) === 2 ? 'Every 2 weeks' : 'Weekly') + (names.length ? ' on ' + names.join(', ') : ''); }
+    }
+    else if (r.f === 'monthly') t = 'Every month';
+    else t = 'Every year';
+    if (r.u) { var u = parse(r.u); t += ' until ' + MSH[u.getMonth()] + ' ' + u.getDate() + ', ' + u.getFullYear(); }
+    return t;
+  }
+  function timeText(it, dayKey) {
+    if (it.all) {
+      if (it.e !== it.d) return 'All day · ' + MSH[parse(it.d).getMonth()] + ' ' + parse(it.d).getDate() + ' – ' + MSH[parse(it.e).getMonth()] + ' ' + parse(it.e).getDate();
+      return 'All day';
+    }
+    var a = fmtT(it.st), b = fmtT(it.et);
+    if (it.e !== it.d) {
+      if (dayKey && dayKey !== it.d && dayKey !== it.e) return 'All day (continues)';
+      return (dayKey && dayKey !== it.d ? 'Until ' + b : a + ' – ' + shortDate(it.e) + ' ' + b);
+    }
+    return a + ' – ' + b;
+  }
+
+  /* ================= state + render ================= */
+  var view = db.set.view || 'month', cur = today(), sel = key(today()), listDays = 60, gridScroll = null, gridRange = '';
+  function setTitle() {
+    var t, s, e;
+    if (view === 'month') t = MON[cur.getMonth()] + ' <span>' + cur.getFullYear() + '</span>';
+    else if (view === 'week') {
+      s = startOfWeek(cur); e = addDays(s, 6);
+      t = (s.getMonth() === e.getMonth() ? MON[s.getMonth()] + ' ' + s.getDate() + ' – ' + e.getDate() : MSH[s.getMonth()] + ' ' + s.getDate() + ' – ' + MSH[e.getMonth()] + ' ' + e.getDate()) + ' <span>' + e.getFullYear() + '</span>';
+    } else if (view === 'day') t = DAYS[cur.getDay()] + ', ' + MON[cur.getMonth()] + ' ' + cur.getDate() + ' <span>' + cur.getFullYear() + '</span>';
+    else t = 'Upcoming <span>from ' + MSH[cur.getMonth()] + ' ' + cur.getDate() + '</span>';
+    $('ttl').innerHTML = t;
+    var b = $('seg').getElementsByTagName('button');
+    for (var i = 0; i < b.length; i++) b[i].classList.toggle('sel', b[i].getAttribute('data-v') === view);
+  }
+  function render() {
+    setTitle();
+    if (view === 'month') renderMonth();
+    else if (view === 'week') { var s = startOfWeek(cur), a = []; for (var i = 0; i < 7; i++) a.push(addDays(s, i)); renderGrid(a); }
+    else if (view === 'day') renderGrid([cur]);
+    else renderList();
+  }
+
+  /* ---- month ---- */
+  function chip(it) {
+    if (it.all || it.e2 !== it.d) {
+      var col = it.all ? it.c : it.c;
+      return '<div class="chip ad" style="background:' + col + ';color:' + onColour(col) + '">' + esc(it.ev.t) + '</div>';
+    }
+    return '<div class="chip"><i style="background:' + it.c + '"></i><em>' + fmtT(it.st, true) + '</em>' + esc(it.ev.t) + '</div>';
+  }
+  function renderMonth() {
+    var first = new Date(cur.getFullYear(), cur.getMonth(), 1), last = new Date(cur.getFullYear(), cur.getMonth() + 1, 0);
+    var gs = startOfWeek(first), rows = Math.ceil((diffDays(gs, last) + 1) / 7), ge = addDays(gs, rows * 7 - 1);
+    var h = '<div class="mo"><div class="mleft"><div class="mhead flex">';
+    for (var i = 0; i < 7; i++) h += '<div>' + DSH[(i + (db.set.weekStart || 0)) % 7] + '</div>';
+    h += '</div><div class="mgrid" id="mgrid"></div></div><div class="dpanel scroll" id="dpanel"></div></div>';
+    $('view').innerHTML = h;
+    var g = $('mgrid'), cellH = g.clientHeight / rows, maxChips = Math.max(1, Math.floor((cellH - 30) / 21));
+    var map = byDay(instances(gs, ge), gs, ge), tk = key(today());
+    h = '';
+    for (var r = 0; r < rows; r++) {
+      h += '<div class="mrow">';
+      for (var c = 0; c < 7; c++) {
+        var d = addDays(gs, r * 7 + c), k = key(d), items = map[k] || [];
+        h += '<div class="mcell' + (d.getMonth() !== cur.getMonth() ? ' other' : '') + (k === sel ? ' sel' : '') + '" data-act="pick" data-d="' + k + '">';
+        h += '<div class="mnum' + (k === tk ? ' today' : '') + '">' + d.getDate() + '</div>';
+        var showN = items.length > maxChips ? maxChips - 1 : items.length;
+        for (var j = 0; j < showN; j++) h += chip(items[j]);
+        if (items.length > showN) h += '<div class="more">+' + (items.length - showN) + ' more</div>';
+        h += '</div>';
+      }
+      h += '</div>';
+    }
+    g.innerHTML = h;
+    renderPanel();
+  }
+  function itemHTML(it, dayKey, cls) {
+    var h = '<div class="' + cls + ' flex" data-act="open" data-id="' + it.ev.id + '" data-o="' + it.d + '"><i style="background:' + it.c + '"></i><div class="grow"><b>' + esc(it.ev.t) + '</b><span>' + timeText(it, dayKey) + '</span>';
+    if (it.ev.loc) h += '<span>' + esc(it.ev.loc) + '</span>';
+    if (it.ev.rep && cls === 'pitem') h += '<span class="rep">↻ ' + repText(it.ev.rep) + '</span>';
+    return h + '</div></div>';
+  }
+  function renderPanel() {
+    var d = parse(sel), items = byDay(instances(d, d), d, d)[sel] || [];
+    var h = '<div class="phead"><div><div class="pday">' + (sel === key(today()) ? 'Today' : DAYS[d.getDay()]) + '</div></div><div class="pdate">' + (sel === key(today()) ? DAYS[d.getDay()] + ', ' : '') + MON[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear() + '</div><button class="padd" data-act="add" data-d="' + sel + '">+ Add Event</button></div>';
+    if (!items.length) h += '<div class="empty">Nothing planned</div>';
+    for (var i = 0; i < items.length; i++) h += itemHTML(items[i], sel, 'pitem');
+    $('dpanel').innerHTML = h;
+  }
+
+  /* ---- week & day (time grid) ---- */
+  function layout(segs) {
+    segs.sort(function (a, b) { return a.s - b.s || (b.e - a.e); });
+    var group = [], cols = [], end = -1;
+    var close = function () { var n = 0, i; for (i = 0; i < group.length; i++) n = Math.max(n, group[i].col + 1); for (i = 0; i < group.length; i++) group[i].n = n; group = []; cols = []; };
+    for (var i = 0; i < segs.length; i++) {
+      var s = segs[i], vis = Math.max(s.e, s.s + 25);
+      if (group.length && s.s >= end) { close(); end = -1; }
+      var c = 0; while (c < cols.length && cols[c] > s.s) c++;
+      cols[c] = vis; s.col = c; group.push(s); end = Math.max(end, vis);
+    }
+    if (group.length) close();
+    return segs;
+  }
+  function renderGrid(days) {
+    var from = days[0], to = days[days.length - 1], list = instances(from, to), tk = key(today());
+    var allMap = {}, segMap = {}, i, k;
+    for (i = 0; i < list.length; i++) {
+      var it = list[i], s = parse(it.d), e = parse(it.e2);
+      for (var d = (s < from ? from : s); d <= e && d <= to; d = addDays(d, 1)) {
+        k = key(d);
+        if (it.all) (allMap[k] = allMap[k] || []).push(it);
+        else {
+          var a = it.d === k ? mins(it.st) : 0, b = it.e === k ? mins(it.et) : 1440;
+          if (b <= a) b = Math.min(1440, a + 30);
+          (segMap[k] = segMap[k] || []).push({ it: it, s: a, e: b });
+        }
+      }
+    }
+    var single = days.length === 1;
+    var h = '<div class="wk' + (single ? ' day' : '') + '"><div class="wkhead"><div class="gut"></div>';
+    for (i = 0; i < days.length; i++) {
+      k = key(days[i]);
+      h += '<div class="wkday' + (k === tk ? ' today' : '') + '" data-act="goday" data-d="' + k + '"><span>' + (single ? DAYS[days[i].getDay()] : DSH[days[i].getDay()]) + '</span><b>' + days[i].getDate() + '</b></div>';
+    }
+    h += '</div><div class="wkall"><div class="gut">all-day</div>';
+    for (i = 0; i < days.length; i++) {
+      k = key(days[i]); var al = (allMap[k] || []).sort(sortI);
+      h += '<div class="alld" data-act="newall" data-d="' + k + '">';
+      for (var j = 0; j < al.length; j++) h += '<div class="chip ad" data-act="open" data-id="' + al[j].ev.id + '" data-o="' + al[j].d + '" style="background:' + al[j].c + ';color:' + onColour(al[j].c) + '">' + esc(al[j].ev.t) + '</div>';
+      h += '</div>';
+    }
+    h += '</div><div class="wkscroll scroll" id="wks"><div class="wkgrid" style="height:' + (24 * HH) + 'px"><div class="gut hours">';
+    for (i = 1; i < 24; i++) h += '<div style="top:' + (i * HH) + 'px">' + hourLabel(i) + '</div>';
+    h += '</div>';
+    var now = new Date(), nowM = now.getHours() * 60 + now.getMinutes();
+    for (i = 0; i < days.length; i++) {
+      k = key(days[i]);
+      h += '<div class="col' + (k === tk ? ' tcol' : '') + '" data-act="slot" data-d="' + k + '">';
+      var segs = layout(segMap[k] || []);
+      for (var q = 0; q < segs.length; q++) {
+        var sg = segs[q], top = sg.s / 60 * HH, ht = Math.max((sg.e - sg.s) / 60 * HH, 22) - 2, c = sg.it.c;
+        var w = 100 / sg.n, short = ht < 36;
+        h += '<div class="blk' + (short ? ' short' : '') + '" data-act="open" data-id="' + sg.it.ev.id + '" data-o="' + sg.it.d + '" style="top:' + (top + 1) + 'px;height:' + ht + 'px;left:' + (sg.col * w) + '%;width:calc(' + w + '% - 3px);background:' + rgba(c, 0.18) + ';border-color:' + c + ';color:' + deep(c) + '">';
+        h += '<b>' + esc(sg.it.ev.t) + '</b><span>' + (sg.it.d === k ? fmtT(sg.it.st) : '') + (single && sg.it.ev.loc ? ' · ' + esc(sg.it.ev.loc) : '') + '</span></div>';
+      }
+      if (k === tk) h += '<div class="now" id="nowline" style="top:' + (nowM / 60 * HH) + 'px"></div>';
+      h += '</div>';
+    }
+    h += '</div></div></div>';
+    $('view').innerHTML = h;
+    // size scroller under the headers
+    var wks = $('wks'), headH = wks.previousSibling.offsetHeight + wks.previousSibling.previousSibling.offsetHeight;
+    wks.style.top = headH + 'px';
+    var range = view + key(from);
+    if (range === gridRange && gridScroll != null) wks.scrollTop = gridScroll;
+    else {
+      // start the view at 7 AM, or a little before the earliest event; jump later in the evening so "now" is on screen
+      var target = 7 * 60;
+      for (k in segMap) if (segMap.hasOwnProperty(k)) for (i = 0; i < segMap[k].length; i++) target = Math.min(target, segMap[k][i].s - 30);
+      if (tk >= key(from) && tk <= key(to) && nowM > target + 9 * 60) target = nowM - 5 * 60;
+      wks.scrollTop = Math.max(0, target / 60 * HH);
+    }
+    gridRange = range;
+    wks.addEventListener('scroll', function () { gridScroll = wks.scrollTop; }, false);
+  }
+
+  /* ---- list ---- */
+  function renderList() {
+    var from = cur, to = addDays(cur, listDays - 1), list = instances(from, to), groups = {}, keys = [], tk = key(today()), i;
+    list.sort(sortI);
+    for (i = 0; i < list.length; i++) {
+      var k = list[i].d < key(from) ? key(from) : list[i].d;
+      if (!groups[k]) { groups[k] = []; keys.push(k); }
+      groups[k].push(list[i]);
+    }
+    keys.sort();
+    var h = '<div class="list scroll" id="lst"><div class="lgroup">';
+    if (!keys.length) h += '<div class="empty" style="padding-top:80px">Nothing planned in the next ' + listDays + ' days.<br>Tap + to add an event.</div>';
+    for (i = 0; i < keys.length; i++) {
+      var d = parse(keys[i]), g = groups[keys[i]].sort(sortI);
+      h += '<div class="lhead' + (keys[i] === tk ? ' today' : '') + '">' + (keys[i] === tk ? 'Today · ' : '') + DAYS[d.getDay()] + ', ' + MON[d.getMonth()] + ' ' + d.getDate() + (d.getFullYear() !== today().getFullYear() ? ', ' + d.getFullYear() : '') + '</div>';
+      for (var j = 0; j < g.length; j++) {
+        var it = g[j];
+        h += '<div class="litem flex" data-act="open" data-id="' + it.ev.id + '" data-o="' + it.d + '"><div class="lt">' + (it.all ? 'All day' : fmtT(it.st) + '<br>' + fmtT(it.et)) + '</div><i style="background:' + it.c + '"></i><div class="grow"><b>' + esc(it.ev.t) + '</b>';
+        if (it.ev.loc) h += '<span>' + esc(it.ev.loc) + '</span>';
+        if (it.e2 !== it.d) h += '<span>Until ' + shortDate(it.e2) + '</span>';
+        h += '<span>' + esc(calOf(it.ev).name) + (it.ev.rep ? ' · ↻ ' + repText(it.ev.rep) : '') + '</span></div></div>';
+      }
+    }
+    h += '<button class="lmore" data-act="more">Show more</button></div></div>';
+    $('view').innerHTML = h;
+  }
+
+  function nav(n) {
+    if (view === 'month') {
+      cur = new Date(cur.getFullYear(), cur.getMonth() + n, 1);
+      var t = today();
+      sel = (t.getMonth() === cur.getMonth() && t.getFullYear() === cur.getFullYear()) ? key(t) : key(cur);
+    } else if (view === 'week') { cur = addDays(cur, 7 * n); sel = key(cur); }
+    else if (view === 'day') { cur = addDays(cur, n); sel = key(cur); }
+    else { cur = addDays(cur, 30 * n); listDays = 60; }
+    render();
+  }
+
+  /* ================= editor ================= */
+  var ed = null;
+  function lastCal() { var c = calById(db.set.lastCal); return c ? c.id : db.cals[0].id; }
+  function openNew(dk, m, all) {
+    if (m == null) {
+      var n = new Date();
+      m = dk === key(today()) ? Math.min((n.getHours() + 1) * 60, 22 * 60) : 9 * 60;
+    }
+    var em = m + 60, edk = dk;
+    if (em >= 1440) { em -= 1440; edk = key(addDays(parse(dk), 1)); }
+    openEditor(null, null, { t: '', loc: '', all: !!all, date: dk, end: all ? dk : edk, st: hhmm(m), et: hhmm(em), rep: null, cal: lastCal(), notes: '' });
+  }
+  function openExisting(id, occ) {
+    var ev = evById(id); if (!ev) return;
+    var span = Math.max(0, diffDays(parse(ev.date), parse(ev.end || ev.date)));
+    openEditor(ev, occ, { t: ev.t, loc: ev.loc, all: ev.all, date: occ, end: key(addDays(parse(occ), span)), st: ev.st, et: ev.et, rep: ev.rep, cal: ev.cal, notes: ev.notes });
+  }
+  function repValue(r) {
+    if (!r || !r.f || r.f === 'none') return 'none';
+    if (r.f === 'weekly') {
+      if ((r.i || 1) === 2) return 'biweekly';
+      if ((r.d || []).slice().sort().join() === '1,2,3,4,5') return 'weekdays';
+      return 'weekly';
+    }
+    return r.f;
+  }
+  function openEditor(ev, occ, f) {
+    var startDow = parse(f.date).getDay();
+    ed = { ev: ev, occ: occ, cal: calById(f.cal) ? f.cal : db.cals[0].id, all: !!f.all, days: (f.rep && f.rep.f === 'weekly' && f.rep.d && f.rep.d.length) ? f.rep.d.slice() : [startDow] };
+    var rv = repValue(f.rep), i;
+    var h = '<div class="shead"><button class="link l" data-act="ecancel">Cancel</button>' + (ev ? 'Edit Event' : 'New Event') + '<button class="link r" data-act="esave">' + (ev ? 'Done' : 'Add') + '</button></div><div class="sbody">';
+    h += '<div class="group"><input class="tin big" id="fT" placeholder="Title" value="' + esc(f.t) + '"><input class="tin" id="fL" placeholder="Location" value="' + esc(f.loc) + '"></div>';
+    h += '<div class="group"><div class="row flex"><label>All-day</label><button class="sw' + (ed.all ? ' on' : '') + '" id="fA" data-act="eall"></button></div>';
+    h += '<div class="row flex"><label>Starts</label><input class="pick" type="date" id="fSD" value="' + f.date + '"><input class="pick tm" type="time" id="fST" value="' + f.st + '"></div>';
+    h += '<div class="row flex"><label>Ends</label><input class="pick" type="date" id="fED" value="' + f.end + '"><input class="pick tm" type="time" id="fET" value="' + f.et + '"></div></div>';
+    h += '<div class="group"><div class="row flex"><label>Repeat</label><select class="pick" id="fR">';
+    var opts = [['none', 'Never'], ['daily', 'Every Day'], ['weekdays', 'Every Weekday (Mon–Fri)'], ['weekly', 'Every Week'], ['biweekly', 'Every 2 Weeks'], ['monthly', 'Every Month'], ['yearly', 'Every Year']];
+    for (i = 0; i < opts.length; i++) h += '<option value="' + opts[i][0] + '"' + (opts[i][0] === rv ? ' selected' : '') + '>' + opts[i][1] + '</option>';
+    h += '</select></div><div class="row days flex" id="fDays">';
+    for (i = 0; i < 7; i++) { var dn = (i + (db.set.weekStart || 0)) % 7; h += '<button data-act="eday" data-n="' + dn + '"' + (ed.days.indexOf(dn) >= 0 ? ' class="sel"' : '') + '>' + DSH[dn].charAt(0) + (dn === 2 || dn === 4 ? DSH[dn].charAt(1) : '') + '</button>'; }
+    var until = f.rep && f.rep.u;
+    h += '</div><div class="row flex" id="fRErow"><label>End Repeat</label><select class="pick" id="fRE"><option value="never"' + (until ? '' : ' selected') + '>Never</option><option value="on"' + (until ? ' selected' : '') + '>On Date</option></select><input class="pick" type="date" id="fU" value="' + (until || key(addDays(parse(f.date), 90))) + '"></div></div>';
+    h += '<div class="glabel">Calendar</div><div class="group"><div class="cals flex" id="fC">';
+    for (i = 0; i < db.cals.length; i++) h += calPill(db.cals[i]);
+    h += '</div></div><div class="group"><textarea id="fN" placeholder="Notes">' + esc(f.notes) + '</textarea></div>';
+    if (ev) h += '<button class="danger" data-act="edelete">Delete Event</button>';
+    h += '</div>';
+    openSheet(h);
+    $('fR').addEventListener('change', edVisibility, false);
+    $('fRE').addEventListener('change', edVisibility, false);
+    var prevSD = f.date, prevST = f.st;
+    $('fSD').addEventListener('change', function () {
+      var v = $('fSD').value; if (!v) return;
+      var shift = diffDays(parse(prevSD), parse(v)), ee = $('fED').value || prevSD;
+      $('fED').value = key(addDays(parse(ee), shift)); prevSD = v;
+      if (repValue({ f: 'weekly', d: ed.days }) !== 'weekdays' && ed.days.length === 1) { ed.days = [parse(v).getDay()]; paintDays(); }
+    }, false);
+    $('fST').addEventListener('change', function () {
+      var v = $('fST').value; if (!v) return; v = v.substr(0, 5);
+      var dur = mins($('fET').value) - mins(prevST);
+      if ($('fED').value === $('fSD').value && dur > 0) { var ne = mins(v) + dur; if (ne < 1440) $('fET').value = hhmm(ne); }
+      prevST = v;
+    }, false);
+    edVisibility();
+  }
+  function calPill(c) {
+    var on = ed.cal === c.id;
+    return '<button class="cpill' + (on ? ' sel' : '') + '" data-act="ecal" data-c="' + c.id + '" style="' + (on ? 'background:' + c.color + ';border-color:' + c.color + ';color:' + onColour(c.color) : '') + '"><i style="background:' + (on ? onColour(c.color) : c.color) + '"></i>' + esc(c.name) + '</button>';
+  }
+  function paintDays() {
+    var b = $('fDays').getElementsByTagName('button');
+    for (var i = 0; i < b.length; i++) b[i].classList.toggle('sel', ed.days.indexOf(+b[i].getAttribute('data-n')) >= 0);
+  }
+  function edVisibility() {
+    var rv = $('fR').value, tm = document.querySelectorAll('.tm');
+    for (var i = 0; i < tm.length; i++) tm[i].classList.toggle('hide', ed.all);
+    $('fDays').classList.toggle('hide', !(rv === 'weekly' || rv === 'biweekly'));
+    $('fRErow').classList.toggle('hide', rv === 'none');
+    $('fU').classList.toggle('hide', $('fRE').value !== 'on');
+    $('fA').classList.toggle('on', ed.all);
+  }
+  function readForm() {
+    var sd = $('fSD').value || sel, ed2 = $('fED').value || sd, st = ($('fST').value || '09:00').substr(0, 5), et = ($('fET').value || '10:00').substr(0, 5);
+    if (ed2 < sd) ed2 = sd;
+    if (!ed.all && ed2 === sd && et <= st) {
+      var m = mins(st) + 60;
+      if (m >= 1440) { ed2 = key(addDays(parse(sd), 1)); m -= 1440; }
+      et = hhmm(m);
+    }
+    var rv = $('fR').value, rep = null;
+    if (rv === 'daily') rep = { f: 'daily', i: 1 };
+    else if (rv === 'weekdays') rep = { f: 'weekly', i: 1, d: [1, 2, 3, 4, 5] };
+    else if (rv === 'weekly' || rv === 'biweekly') rep = { f: 'weekly', i: rv === 'biweekly' ? 2 : 1, d: ed.days.length ? ed.days.slice().sort() : [parse(sd).getDay()] };
+    else if (rv === 'monthly') rep = { f: 'monthly', i: 1 };
+    else if (rv === 'yearly') rep = { f: 'yearly', i: 1 };
+    if (rep && $('fRE').value === 'on' && $('fU').value) rep.u = $('fU').value;
+    // a weekly event must start on one of its chosen days
+    if (rep && rep.f === 'weekly' && rep.d.indexOf(parse(sd).getDay()) < 0) {
+      var span = diffDays(parse(sd), parse(ed2)), s = parse(sd), g = 0;
+      while (rep.d.indexOf(s.getDay()) < 0 && g < 7) { s = addDays(s, 1); g++; }
+      sd = key(s); ed2 = key(addDays(s, span));
+    }
+    return { t: $('fT').value.replace(/^\s+|\s+$/g, '') || 'New Event', loc: $('fL').value.replace(/^\s+|\s+$/g, ''), all: ed.all, date: sd, end: ed2, st: ed.all ? '00:00' : st, et: ed.all ? '00:00' : et, rep: rep, cal: ed.cal, notes: $('fN').value };
+  }
+  function apply(ev, f) { ev.t = f.t; ev.loc = f.loc; ev.all = f.all; ev.date = f.date; ev.end = f.end; ev.st = f.st; ev.et = f.et; ev.rep = f.rep; ev.cal = f.cal; ev.notes = f.notes; if (!ev.rep) ev.ex = []; return ev; }
+  function make(f) { return apply({ id: uid('e'), ex: [] }, f); }
+  function finish(msg) { save(); closeSheet(); sel = sel || key(today()); render(); if (msg) toast(msg); }
+  function saveEditor() {
+    blur();
+    var f = readForm(); db.set.lastCal = f.cal;
+    if (!ed.ev) { db.events.push(make(f)); jumpTo(f.date); finish('Event added'); return; }
+    var ev = ed.ev, occ = ed.occ;
+    if (!ev.rep) { apply(ev, f); jumpTo(f.date); finish('Saved'); return; }
+    ask('This is a repeating event.', 'Save your changes for just this one, or for this and all future ones?', [
+      { label: 'Save for This Event Only', fn: function () { (ev.ex = ev.ex || []).push(occ); var ne = make(f); ne.rep = null; ne.ex = []; db.events.push(ne); finish('Saved'); } },
+      { label: 'Save for Future Events', fn: function () {
+        if (occ <= ev.date) apply(ev, f);
+        else {
+          var ne = make(f), keep = [];
+          for (var i = 0; i < (ev.ex || []).length; i++) if (ev.ex[i] >= occ) keep.push(ev.ex[i]);
+          if (ne.rep) ne.ex = keep;
+          ev.rep.u = key(addDays(parse(occ), -1));
+          db.events.push(ne);
+        }
+        finish('Saved');
+      } },
+      { label: 'Cancel', cls: 'bold' }
+    ]);
+  }
+  function deleteEvent() {
+    var ev = ed.ev, occ = ed.occ;
+    var removeAll = function () { db.events.splice(db.events.indexOf(ev), 1); };
+    if (!ev.rep) {
+      ask('Delete “' + esc(ev.t) + '”?', '', [{ label: 'Delete Event', cls: 'red', fn: function () { removeAll(); finish('Deleted'); } }, { label: 'Cancel', cls: 'bold' }]);
+      return;
+    }
+    ask('This is a repeating event.', 'Delete just this one, or this and all future ones?', [
+      { label: 'Delete This Event Only', cls: 'red', fn: function () { (ev.ex = ev.ex || []).push(occ); finish('Deleted'); } },
+      { label: 'Delete All Future Events', cls: 'red', fn: function () { if (occ <= ev.date) removeAll(); else ev.rep.u = key(addDays(parse(occ), -1)); finish('Deleted'); } },
+      { label: 'Cancel', cls: 'bold' }
+    ]);
+  }
+  function jumpTo(k) {
+    var d = parse(k); sel = k;
+    if (view === 'month' && (d.getMonth() !== cur.getMonth() || d.getFullYear() !== cur.getFullYear())) cur = new Date(d.getFullYear(), d.getMonth(), 1);
+    if (view === 'day') cur = d;
+    if (view === 'week' && (d < startOfWeek(cur) || d > addDays(startOfWeek(cur), 6))) cur = d;
+  }
+
+  /* ================= calendars + settings ================= */
+  function openCals() {
+    var h = '<div class="shead">Calendars<button class="link r" data-act="sclose">Done</button></div><div class="sbody"><div class="group">';
+    for (var i = 0; i < db.cals.length; i++) {
+      var c = db.cals[i];
+      h += '<div class="crow"><div class="flex"><button class="eye" data-act="ctoggle" data-c="' + c.id + '" style="border-color:' + c.color + ';background:' + (c.on ? c.color : '#fff') + ';color:' + onColour(c.color) + '">' + (c.on ? '✓' : '') + '</button>';
+      h += '<input class="cname" data-c="' + c.id + '" value="' + esc(c.name) + '"><button class="cdel" data-act="cdel" data-c="' + c.id + '">Delete</button></div><div class="dots flex">';
+      for (var j = 0; j < PALETTE.length; j++) h += '<button data-act="ccolor" data-c="' + c.id + '" data-col="' + PALETTE[j] + '" style="background:' + PALETTE[j] + '"' + (PALETTE[j] === c.color ? ' class="sel"' : '') + '></button>';
+      h += '</div></div>';
+    }
+    h += '<button class="addrow" data-act="cadd">+ Add Calendar</button></div>';
+    h += '<div class="note">Tap the circle to show or hide a calendar. Tap a colour to change it.</div>';
+    h += '<div class="glabel">Settings</div><div class="group">';
+    h += '<div class="row flex"><label>Week starts on</label><div class="seg2 flex"><button data-act="ws" data-v="0"' + (!db.set.weekStart ? ' class="sel"' : '') + '>Sunday</button><button data-act="ws" data-v="1"' + (db.set.weekStart === 1 ? ' class="sel"' : '') + '>Monday</button></div></div>';
+    h += '<div class="row flex"><label>Time</label><div class="seg2 flex"><button data-act="h24" data-v="0"' + (!db.set.h24 ? ' class="sel"' : '') + '>12-hour</button><button data-act="h24" data-v="1"' + (db.set.h24 ? ' class="sel"' : '') + '>24-hour</button></div></div></div>';
+    h += '<div class="glabel">Backup</div><div class="group"><div class="note">Everything is saved on this iPad only. Make a backup every so often so nothing is lost if Safari’s data gets cleared.</div>';
+    h += '<button class="wbtn" data-act="bexport">Back Up Calendar…</button><button class="wbtn" data-act="bimport">Restore From a Backup…</button><div id="bArea"></div></div>';
+    h += '<div class="note" style="text-align:center;margin-top:10px">' + db.events.length + ' event' + (db.events.length === 1 ? '' : 's') + ' saved</div></div>';
+    var keepScroll = $('sheetOv').classList.contains('on') ? $('sheet').scrollTop : 0;
+    openSheet(h);
+    $('sheet').scrollTop = keepScroll;
+    var ins = document.querySelectorAll('.cname');
+    for (var k = 0; k < ins.length; k++) {
+      ins[k].addEventListener('input', function () { var c = calById(this.getAttribute('data-c')); if (c) { c.name = this.value; save(); } }, false);
+    }
+  }
+
+  /* ================= sheets, dialogs, toast ================= */
+  function openSheet(h) { $('sheet').innerHTML = h; $('sheetOv').classList.add('on'); $('sheet').scrollTop = 0; }
+  function closeSheet() { blur(); $('sheetOv').classList.remove('on'); $('sheet').innerHTML = ''; }
+  function blur() { var a = document.activeElement; if (a && a.blur && a !== document.body) a.blur(); }
+  var askBtns = [];
+  function ask(title, msg, buttons) {
+    askBtns = buttons;
+    var h = '<h3>' + title + '</h3>' + (msg ? '<p>' + msg + '</p>' : '<p></p>');
+    for (var i = 0; i < buttons.length; i++) h += '<button data-act="askbtn" data-i="' + i + '" class="' + (buttons[i].cls || '') + '">' + buttons[i].label + '</button>';
+    $('askbox').innerHTML = h; $('askOv').classList.add('on');
+  }
+  var toastT = 0;
+  function toast(m) { var t = $('toast'); t.innerHTML = m; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(function () { t.classList.remove('on'); }, 1800); }
+
+  /* ================= actions ================= */
+  var ACT = {
+    today: function () { cur = today(); sel = key(cur); listDays = 60; gridRange = ''; render(); },
+    prev: function () { nav(-1); },
+    next: function () { nav(1); },
+    view: function (el) {
+      view = el.getAttribute('data-v'); db.set.view = view; save();
+      if (view === 'month') { var s = parse(sel); cur = new Date(s.getFullYear(), s.getMonth(), 1); }
+      else if (view === 'list') { cur = today(); listDays = 60; }
+      else cur = parse(sel);
+      render();
+    },
+    pick: function (el) {
+      var k = el.getAttribute('data-d'), d = parse(k);
+      if (k === sel) { view = 'day'; cur = d; db.set.view = 'day'; save(); render(); return; }
+      sel = k;
+      if (d.getMonth() !== cur.getMonth()) { cur = new Date(d.getFullYear(), d.getMonth(), 1); render(); return; }
+      var cells = document.querySelectorAll('.mcell');
+      for (var i = 0; i < cells.length; i++) cells[i].classList.toggle('sel', cells[i].getAttribute('data-d') === k);
+      renderPanel();
+    },
+    goday: function (el) { if (view === 'day') return; sel = el.getAttribute('data-d'); cur = parse(sel); view = 'day'; db.set.view = 'day'; save(); render(); },
+    add: function (el) {
+      var d = el.getAttribute('data-d');
+      if (!d) {
+        if (view === 'month') d = sel;
+        else if (view === 'day') d = key(cur);
+        else if (view === 'week') { var s = startOfWeek(cur), t = today(); d = (t >= s && t <= addDays(s, 6)) ? key(t) : key(s); }
+        else d = key(today());
+      }
+      openNew(d);
+    },
+    slot: function (el, x, y) {
+      var r = el.getBoundingClientRect(), m = Math.floor((y - r.top) / HH * 2) * 30;
+      openNew(el.getAttribute('data-d'), Math.max(0, Math.min(m, 23 * 60 + 30)));
+    },
+    newall: function (el) { openNew(el.getAttribute('data-d'), null, true); },
+    open: function (el) { openExisting(el.getAttribute('data-id'), el.getAttribute('data-o')); },
+    more: function () { listDays += 60; var s = $('lst').scrollTop; render(); $('lst').scrollTop = s; },
+    ecancel: function () { closeSheet(); },
+    esave: function () { saveEditor(); },
+    edelete: function () { deleteEvent(); },
+    eall: function () {
+      ed.all = !ed.all;
+      if (!ed.all && $('fED').value === $('fSD').value && mins($('fET').value) <= mins($('fST').value)) { $('fST').value = '09:00'; $('fET').value = '10:00'; }
+      edVisibility();
+    },
+    eday: function (el) {
+      var n = +el.getAttribute('data-n'), i = ed.days.indexOf(n);
+      if (i >= 0) { if (ed.days.length > 1) ed.days.splice(i, 1); } else ed.days.push(n);
+      paintDays();
+    },
+    ecal: function (el) { ed.cal = el.getAttribute('data-c'); var h = ''; for (var i = 0; i < db.cals.length; i++) h += calPill(db.cals[i]); $('fC').innerHTML = h; },
+    cals: function () { openCals(); },
+    sclose: function () { closeSheet(); render(); },
+    ctoggle: function (el) { var c = calById(el.getAttribute('data-c')); c.on = !c.on; save(); openCals(); render(); },
+    ccolor: function (el) { var c = calById(el.getAttribute('data-c')); c.color = el.getAttribute('data-col'); save(); openCals(); render(); },
+    cadd: function () {
+      var used = {}, col = PALETTE[0], i;
+      for (i = 0; i < db.cals.length; i++) used[db.cals[i].color] = 1;
+      for (i = 0; i < PALETTE.length; i++) if (!used[PALETTE[i]]) { col = PALETTE[i]; break; }
+      db.cals.push({ id: uid('c'), name: 'New Calendar', color: col, on: true }); save(); openCals();
+      var sh = $('sheet'); setTimeout(function () { var ins = document.querySelectorAll('.cname'); if (ins.length) sh.scrollTop = ins[ins.length - 1].offsetTop - 120; }, 30);
+    },
+    cdel: function (el) {
+      var c = calById(el.getAttribute('data-c')); if (!c) return;
+      if (db.cals.length === 1) { toast('You need at least one calendar'); return; }
+      var n = 0, i; for (i = 0; i < db.events.length; i++) if (db.events[i].cal === c.id) n++;
+      ask('Delete “' + esc(c.name) + '”?', n ? 'Its ' + n + ' event' + (n === 1 ? '' : 's') + ' will be deleted too.' : '', [
+        { label: 'Delete Calendar', cls: 'red', fn: function () {
+          db.events = db.events.filter(function (e) { return e.cal !== c.id; });
+          db.cals.splice(db.cals.indexOf(c), 1);
+          if (db.set.lastCal === c.id) db.set.lastCal = db.cals[0].id;
+          save(); openCals(); render();
+        } },
+        { label: 'Cancel', cls: 'bold' }]);
+    },
+    ws: function (el) { db.set.weekStart = +el.getAttribute('data-v'); save(); gridRange = ''; openCals(); render(); },
+    h24: function (el) { db.set.h24 = el.getAttribute('data-v') === '1'; save(); openCals(); render(); },
+    bexport: function () {
+      var data = JSON.stringify(db), d = today();
+      var subj = 'Family Calendar backup ' + MSH[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+      $('bArea').innerHTML = '<div class="note">Email this to yourself, or tap in the box, Select All, and Copy it somewhere safe (like Notes).</div><a href="mailto:?subject=' + encodeURIComponent(subj) + '&body=' + encodeURIComponent(data) + '">✉️ Email the backup to myself</a><textarea readonly id="bOut">' + esc(data) + '</textarea>';
+    },
+    bimport: function () {
+      $('bArea').innerHTML = '<div class="note">Paste a backup below, then tap Restore. This replaces everything on this iPad.</div><textarea id="bIn" placeholder="Paste backup here"></textarea><button class="wbtn red" data-act="brestore">Restore</button>';
+    },
+    brestore: function () {
+      var txt = ($('bIn').value || '').replace(/^\s+|\s+$/g, ''), o = null;
+      try { o = JSON.parse(txt); } catch (e) { o = null; }
+      if (!valid(o)) { toast('That doesn’t look like a calendar backup'); return; }
+      ask('Replace this calendar?', 'Everything on this iPad will be replaced with the ' + o.events.length + ' events in the backup.', [
+        { label: 'Restore Backup', cls: 'red', fn: function () { o.set = o.set || {}; db = o; save(); closeSheet(); view = db.set.view || 'month'; render(); toast('Backup restored'); } },
+        { label: 'Cancel', cls: 'bold' }]);
+    },
+    askbtn: function (el) {
+      var b = askBtns[+el.getAttribute('data-i')];
+      $('askOv').classList.remove('on');
+      if (b && b.fn) b.fn();
+    }
+  };
+
+  /* ================= touch handling ================= */
+  function actEl(t) {
+    while (t && t !== document) { if (t.getAttribute && t.getAttribute('data-act')) return t; t = t.parentNode; }
+    return null;
+  }
+  function scrollParent(t) {
+    while (t && t !== document) { if (t.classList && t.classList.contains('scroll')) return t; t = t.parentNode; }
+    return null;
+  }
+  function isField(t) { var n = t && t.nodeName; return n === 'INPUT' || n === 'SELECT' || n === 'TEXTAREA' || n === 'OPTION' || n === 'A'; }
+  function inView(t) { var v = $('view'); while (t) { if (t === v) return true; t = t.parentNode; } return false; }
+  function modalOpen() { return $('sheetOv').classList.contains('on') || $('askOv').classList.contains('on'); }
+  function run(el, x, y) {
+    var a = el.getAttribute('data-act');
+    if (modalOpen() && !inModal(el)) return;
+    if (ACT[a]) ACT[a](el, x, y);
+  }
+  function inModal(t) { var a = $('sheetOv'), b = $('askOv'); while (t) { if (t === a || t === b) return true; t = t.parentNode; } return false; }
+  // modern browsers treat page-level touch listeners as passive; ask for the old behaviour (ignored on iOS 9)
+  var NOPASSIVE = false;
+  try { window.addEventListener('t', null, Object.defineProperty({}, 'passive', { get: function () { NOPASSIVE = { passive: false }; return false; } })); } catch (e) {}
+  var tx = 0, ty = 0, moved = false, tgt = null, pressedEl = null, lastEnd = 0;
+  function press(el) { if (pressedEl) pressedEl.classList.remove('pressed'); pressedEl = el; if (el && el.className.indexOf('mcell') < 0 && el.className.indexOf('col') !== 0 && el.className.indexOf('alld') < 0) el.classList.add('pressed'); }
+  document.addEventListener('touchstart', function (e) {
+    var t = e.touches[0]; tx = t.clientX; ty = t.clientY; moved = false; tgt = e.target;
+    if (e.touches.length === 1) press(actEl(e.target));
+    var s = scrollParent(e.target);
+    if (s && s.scrollHeight > s.clientHeight) {
+      if (s.scrollTop <= 0) s.scrollTop = 1;
+      else if (s.scrollTop + s.clientHeight >= s.scrollHeight) s.scrollTop = s.scrollHeight - s.clientHeight - 1;
+    }
+  }, NOPASSIVE);
+  document.addEventListener('touchmove', function (e) {
+    var t = e.touches[0];
+    if (Math.abs(t.clientX - tx) > 10 || Math.abs(t.clientY - ty) > 10) { moved = true; press(null); }
+    var s = scrollParent(e.target);
+    if (!s || s.scrollHeight <= s.clientHeight) { if (!isField(e.target)) e.preventDefault(); }
+  }, NOPASSIVE);
+  document.addEventListener('touchend', function (e) {
+    press(null); lastEnd = Date.now();
+    var t = e.changedTouches[0], dx = t.clientX - tx, dy = t.clientY - ty;
+    if (Math.abs(dx) > 70 && Math.abs(dy) < Math.abs(dx) * 0.6 && inView(tgt) && !modalOpen() && view !== 'list') { e.preventDefault(); nav(dx < 0 ? 1 : -1); return; }
+    if (moved || isField(e.target)) return;
+    var el = actEl(e.target); if (!el) return;
+    e.preventDefault(); blurIfNeeded(el);
+    run(el, t.clientX, t.clientY);
+  }, NOPASSIVE);
+  function blurIfNeeded(el) { var a = document.activeElement; if (a && a !== document.body && isField(a) && el.getAttribute('data-act') !== 'eday') a.blur(); }
+  document.addEventListener('click', function (e) {
+    if (Date.now() - lastEnd < 700) return;
+    if (isField(e.target)) return;
+    var el = actEl(e.target); if (el) { e.preventDefault(); run(el, e.clientX, e.clientY); }
+  }, false);
+  $('sheetOv').addEventListener('click', function (e) { if (e.target === $('sheetOv') && $('sheet').innerHTML.indexOf('data-act="sclose"') >= 0) { closeSheet(); render(); } }, false);
+  document.addEventListener('keydown', function (e) { if (e.keyCode === 13 && e.target && (e.target.id === 'fT' || e.target.id === 'fL')) { e.preventDefault(); e.target.blur(); } }, false);
+
+  /* ================= upkeep ================= */
+  var resizeT = 0, lastDay = key(today());
+  window.addEventListener('resize', function () { clearTimeout(resizeT); resizeT = setTimeout(function () { if (!modalOpen() || $('sheet').innerHTML.indexOf('sclose') >= 0) render(); }, 250); }, false);
+  window.addEventListener('orientationchange', function () { setTimeout(render, 350); }, false);
+  setInterval(function () {
+    var tk = key(today());
+    if (tk !== lastDay) { if (sel === lastDay) sel = tk; lastDay = tk; if (!modalOpen()) render(); return; }
+    var nl = $('nowline'); if (nl) { var n = new Date(); nl.style.top = ((n.getHours() * 60 + n.getMinutes()) / 60 * HH) + 'px'; }
+  }, 30000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && !modalOpen()) render(); }, false);
+
+  // for testing in a regular browser
+  window.__cal = { db: function () { return db; }, occs: occs, instances: instances, parse: parse, key: key, render: render, act: ACT, setView: function (v) { view = v; render(); } };
+
+  if (view === 'list') cur = today();
+  render();
+  save();
+})();
+</script>
+</body>
+</html>

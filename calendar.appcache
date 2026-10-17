@@ -1,0 +1,9 @@
+CACHE MANIFEST
+# Family Calendar v1
+
+CACHE:
+calendar.html
+calendar-icon.png
+
+NETWORK:
+*

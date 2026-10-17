@@ -1,0 +1,9 @@
+CACHE MANIFEST
+# Play Time v1
+
+CACHE:
+play.html
+play-icon.png
+
+NETWORK:
+*
