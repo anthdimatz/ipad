@@ -85,7 +85,8 @@ button{font-family:inherit;border:0;background:none;color:inherit;cursor:pointer
 /* ---------- FLASHCARDS ---------- */
 #cards{background:#E9F7EF}
 .decks{position:absolute;top:14px;left:90px;right:14px;height:62px;-webkit-justify-content:center;justify-content:center}
-.deck{height:58px;padding:0 20px;margin:0 5px;border-radius:29px;background:#fff;font-size:22px;font-weight:800;box-shadow:0 4px 0 rgba(0,0,0,.1)}
+.deck{height:58px;padding:0 13px;margin:0 3px;border-radius:29px;background:#fff;font-size:19px;font-weight:800;box-shadow:0 4px 0 rgba(0,0,0,.1);white-space:nowrap}
+.deck .di{font-size:24px;margin-right:5px;vertical-align:-2px}
 .deck.sel{background:#20BF6B;color:#fff;box-shadow:0 4px 0 #16894c}
 .cardwrap{position:absolute;top:100px;bottom:112px;left:50%;width:580px;margin-left:-290px;-webkit-perspective:1400px;perspective:1400px}
 .card{position:absolute;top:0;left:0;right:0;bottom:0;-webkit-transform-style:preserve-3d;transform-style:preserve-3d;-webkit-transition:-webkit-transform .45s,opacity .18s;transition:transform .45s,opacity .18s}
@@ -93,7 +94,9 @@ button{font-family:inherit;border:0;background:none;color:inherit;cursor:pointer
 .card.noanim{-webkit-transition:none;transition:none}
 .card.fade{opacity:0}
 .face{position:absolute;top:0;left:0;right:0;bottom:0;border-radius:36px;background:#fff;box-shadow:0 12px 0 rgba(0,0,0,.08);-webkit-backface-visibility:hidden;backface-visibility:hidden;-webkit-flex-direction:column;flex-direction:column;overflow:hidden}
-.face.back{-webkit-transform:rotateY(180deg);transform:rotateY(180deg)}
+.face.back{-webkit-transform:rotateY(180deg);transform:rotateY(180deg);pointer-events:none}
+.card.flip .face.back{pointer-events:auto}
+.card.flip .face.front{pointer-events:none}
 .face .tag{position:absolute;bottom:16px;left:0;right:0;text-align:center;font-size:17px;font-weight:600;color:#aaa}
 .big{font-size:230px;font-weight:800;line-height:1;color:#4B7BEC}
 .big small{font-size:150px;color:#FF6B6B;margin-left:16px}
@@ -113,7 +116,7 @@ button{font-family:inherit;border:0;background:none;color:inherit;cursor:pointer
 .pill{height:62px;padding:0 24px;border-radius:31px;background:#fff;font-size:22px;font-weight:800;margin:0 8px;box-shadow:0 4px 0 rgba(0,0,0,.08)}
 .pill.sel{background:#2D3047;color:#fff}
 .count{font-size:24px;font-weight:800;min-width:110px;text-align:center;color:#20BF6B}
-@media (orientation:portrait){.cardwrap{width:540px;margin-left:-270px;top:110px;bottom:220px}.arrow{top:auto;bottom:108px;margin-top:0;height:90px}.arrow.l{left:110px}.arrow.r{right:110px}.decks{left:84px}.deck{padding:0 12px;font-size:20px;margin:0 3px}}
+@media (orientation:portrait){.cardwrap{width:540px;margin-left:-270px;top:110px;bottom:220px}.arrow{top:auto;bottom:108px;margin-top:0;height:90px}.arrow.l{left:110px}.arrow.r{right:110px}.decks{left:84px}.deck{padding:0 12px;font-size:20px;margin:0 3px}.deck.hasicon .dl{display:none}.deck .di{font-size:30px;margin:0}}
 
 /* ---------- SOUNDS ---------- */
 #sounds{background:#FFF1D6}
@@ -135,11 +138,11 @@ button{font-family:inherit;border:0;background:none;color:inherit;cursor:pointer
 .bubble{position:absolute;top:0;left:0;border-radius:50%;box-shadow:inset -6px -10px 18px rgba(255,255,255,.35),inset 4px 6px 10px rgba(255,255,255,.6),0 0 0 2px rgba(255,255,255,.55);text-align:center}
 .bubble.star{font-size:48px}
 .dot{position:absolute;width:16px;height:16px;border-radius:8px;pointer-events:none;-webkit-transition:-webkit-transform .45s ease-out,opacity .45s;transition:transform .45s ease-out,opacity .45s}
-.fish{position:absolute;bottom:26px;font-size:54px;pointer-events:none}
 
 /* ---------- MEMORY ---------- */
 #memory{background:#F3EAFE}
 .mgrid{position:absolute;top:96px;left:20px;right:20px;bottom:20px;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-align-content:center;align-content:center;-webkit-justify-content:center;justify-content:center}
+.mwrap{display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-justify-content:center;justify-content:center}
 .mcard{position:relative;margin:7px;-webkit-perspective:800px;perspective:800px}
 .mcard .in{position:absolute;top:0;left:0;right:0;bottom:0;-webkit-transform-style:preserve-3d;transform-style:preserve-3d;-webkit-transition:-webkit-transform .35s;transition:transform .35s}
 .mcard.up .in{-webkit-transform:rotateY(180deg);transform:rotateY(180deg)}
@@ -173,6 +176,104 @@ button{font-family:inherit;border:0;background:none;color:inherit;cursor:pointer
 .toast{position:fixed;left:50%;top:40%;width:420px;margin-left:-210px;text-align:center;background:#fff;border-radius:30px;padding:26px;font-size:40px;font-weight:800;z-index:70;box-shadow:0 20px 50px rgba(0,0,0,.25);-webkit-animation:pop .4s;animation:pop .4s}
 @-webkit-keyframes pop{0%{-webkit-transform:scale(.5);opacity:0}70%{-webkit-transform:scale(1.08)}100%{-webkit-transform:scale(1);opacity:1}}
 @keyframes pop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+
+/* ---------- home: 9 tiles + grown-ups lock ---------- */
+.tile{width:18.2%;height:41%;margin:.9%;font-size:23px}
+.tile .ic{font-size:76px}
+.t8{background:#0FB9B1}.t9{background:#E17055}
+.lockbtn{position:absolute;top:18px;left:18px;width:62px;height:62px;border-radius:31px;background:#fff;font-size:28px;line-height:62px;text-align:center;box-shadow:0 5px 0 rgba(0,0,0,.12);transition:box-shadow 1.5s linear}
+.lockbtn.holding{box-shadow:0 0 0 12px #20BF6B}
+@media (orientation:portrait){.tile{width:30%;height:28.5%;margin:1.3%;font-size:26px}.tile .ic{font-size:80px}}
+input{-webkit-user-select:text;user-select:text}
+
+/* ---------- brain games ---------- */
+#games{background:#E8F4FD}
+.subjects{position:absolute;top:96px;left:20px;right:20px;bottom:20px;flex-wrap:wrap;align-content:center}
+.subj{width:30%;height:42%;margin:1.3%;border-radius:32px;color:#fff;box-shadow:0 10px 0 rgba(0,0,0,.16);flex-direction:column;position:relative}
+.subj.pressed{transform:translateY(7px);box-shadow:0 3px 0 rgba(0,0,0,.16)}
+.subj .ic{font-size:78px;line-height:1.1;margin-bottom:4px}
+.subj .nm{font-size:30px;font-weight:800;text-shadow:0 2px 0 rgba(0,0,0,.12)}
+.subj .lv{margin-top:8px;font-size:17px;font-weight:800;background:rgba(255,255,255,.28);border-radius:14px;padding:4px 14px}
+.subj .st{position:absolute;top:12px;right:16px;font-size:18px;font-weight:800}
+@media (orientation:portrait){.subj{width:45%;height:28%}}
+
+#quiz{background:#FFF8EC}
+.qtop{position:absolute;top:14px;left:90px;right:120px;height:62px;justify-content:center;align-items:center}
+.qsubj{font-size:28px;font-weight:800;margin-right:12px;white-space:nowrap}
+.qlvl{background:#2D3047;color:#fff;border-radius:16px;padding:5px 14px;font-size:18px;font-weight:800;margin-right:14px;white-space:nowrap}
+.qdots{white-space:nowrap}
+.qdots i{display:inline-block;width:18px;height:18px;border-radius:9px;background:#E8DFCC;margin:0 4px;vertical-align:middle}
+.qdots i.on{background:#F7B731}
+.qstars{position:absolute;top:28px;right:22px;font-size:22px;font-weight:800}
+.qwrap{position:absolute;top:84px;left:12px;right:12px;bottom:10px;display:flex;flex-direction:column}
+.qprompt{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.qinstr{display:flex;align-items:center;font-size:22px;font-weight:700;color:#5b5e78;margin-top:12px}
+.qsay{width:60px;height:60px;border-radius:30px;background:#4B7BEC;color:#fff;font-size:28px;margin-right:12px;box-shadow:0 5px 0 #2f5bc4;flex-shrink:0}
+.qchoices{flex-shrink:0;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;padding:4px 0 8px}
+.qc{min-width:156px;height:156px;margin:10px 12px;padding:0 14px;border-radius:32px;background:#fff;box-shadow:0 8px 0 rgba(0,0,0,.1);font-size:92px;line-height:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#2D3047;transition:transform .1s,background .2s,opacity .2s}
+.qc.pressed{transform:translateY(5px);box-shadow:0 3px 0 rgba(0,0,0,.1)}
+.qc.txt{font-weight:800;font-size:86px}
+.qc.word{font-weight:800;font-size:50px;min-width:190px}
+.qc.pic{font-size:96px}
+.qc.sz{width:176px;height:176px}
+.qc.pat{width:156px}
+.qc.grp{height:auto;min-height:170px;min-width:250px;max-width:340px;padding:14px}
+.qc.right{background:#C8F7DC;box-shadow:0 8px 0 #20BF6B;transform:scale(1.06)}
+.qc.wrong{background:#FFE1E1;opacity:.4}
+.qc.used{opacity:.2}
+.qc.hint{animation:hintp .8s infinite}
+@keyframes hintp{0%,100%{box-shadow:0 8px 0 rgba(0,0,0,.1),0 0 0 0 rgba(247,183,49,0)}50%{box-shadow:0 8px 0 rgba(0,0,0,.1),0 0 0 12px rgba(247,183,49,.95)}}
+.shake{animation:shk .4s}
+@keyframes shk{0%,100%{transform:translateX(0)}20%{transform:translateX(-12px)}40%{transform:translateX(12px)}60%{transform:translateX(-8px)}80%{transform:translateX(8px)}}
+.pbig{font-size:150px;line-height:1.1}
+.ptxt{font-weight:800;color:#4B7BEC}
+.plabel{font-size:36px;font-weight:800}
+.pword{font-size:120px;font-weight:800;letter-spacing:6px;line-height:1.1}
+.gap{color:#FF6B6B}
+.psent{font-size:64px;font-weight:800;line-height:1.2;padding:0 20px}
+.prow{display:flex;align-items:center;justify-content:center;flex-wrap:wrap}
+.op{font-size:70px;font-weight:800;margin:0 18px;color:#FF6B6B}
+.arr{font-size:50px;font-weight:800;color:#C9BBEE;margin:0 8px}
+.grid5{display:flex;flex-wrap:wrap;justify-content:center}
+.ci{display:inline-block;text-align:center;line-height:1.2;position:relative}
+.ci i{font-style:normal}
+.ci.gone i{opacity:.3}
+.ci.gone:after{content:"\2716";position:absolute;left:0;right:0;top:50%;margin-top:-.5em;line-height:1;color:#E53935;font-size:.85em;font-weight:800}
+.nbox{display:inline-block;width:124px;height:124px;border-radius:26px;background:#fff;box-shadow:0 6px 0 rgba(0,0,0,.08);font-size:80px;font-weight:800;line-height:124px;margin:0 12px}
+.nbox.q{border:5px dashed #C9BBEE;background:none;box-shadow:none;color:#C9BBEE;line-height:114px}
+.pseq{display:flex;align-items:center;justify-content:center;flex-wrap:wrap}
+.ptok{margin:4px}
+.pq{display:inline-block;margin:4px;border:5px dashed #C9BBEE;border-radius:18px;color:#B9A8E8;font-weight:800;text-align:center}
+.shadow{-webkit-filter:brightness(0);filter:brightness(0);opacity:.8}
+.slots{display:flex;justify-content:center;margin-top:6px}
+.slot{width:104px;height:116px;border-bottom:8px solid #2D3047;margin:0 10px;font-size:92px;font-weight:800;text-align:center;line-height:116px;color:#20BF6B}
+@media (orientation:portrait){.qc{min-width:140px;height:140px;margin:8px;font-size:82px}.qc.txt{font-size:76px}.qc.sz{width:160px;height:160px}.pbig{font-size:130px}.qtop{right:100px}.qsubj{font-size:24px}}
+
+/* ---------- write (tracing) ---------- */
+#trace{background:#F3EAFE}
+.tsets{position:absolute;top:14px;left:90px;right:14px;height:62px;justify-content:center}
+.tpill{height:58px;padding:0 16px;margin:0 4px;border-radius:29px;background:#fff;font-size:20px;font-weight:800;box-shadow:0 4px 0 rgba(0,0,0,.1);white-space:nowrap}
+.tpill.sel{background:#A55EEA;color:#fff;box-shadow:0 4px 0 #7d3fc0}
+#tstage{position:absolute;top:88px;left:12px;right:12px;bottom:96px;background:#fff;border-radius:24px;overflow:hidden}
+#tstage canvas{position:absolute;top:0;left:0}
+.tbar{position:absolute;bottom:12px;left:0;right:0;height:76px;justify-content:center;align-items:center}
+.tbtn{width:76px;height:68px;border-radius:24px;background:#fff;margin:0 8px;font-size:32px;font-weight:800;box-shadow:0 5px 0 rgba(0,0,0,.08);color:#A55EEA}
+.tbtn.pressed{transform:translateY(4px)}
+.tcount{font-size:22px;font-weight:800;color:#A55EEA;margin:0 12px;min-width:120px;text-align:center}
+@media (orientation:portrait){.tbtn{width:66px;margin:0 5px}.tcount{min-width:96px;margin:0 6px;font-size:20px}}
+
+/* ---------- grown-ups ---------- */
+.gpanel{width:660px;max-height:92%;overflow-y:auto;-webkit-overflow-scrolling:touch;text-align:left;padding:22px 26px}
+.gpanel h2{text-align:center;margin-bottom:6px}
+.grow{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid #eee}
+.grow .gi{font-size:30px;width:46px;flex-shrink:0}
+.grow .gn{flex:1;min-width:0}
+.grow .gn b{display:block;font-size:18px}
+.grow .gn span{display:block;color:#777;font-size:14px;margin-top:2px}
+.gbtn{width:50px;height:46px;border-radius:12px;background:#F2F2F7;font-size:28px;font-weight:800;margin-left:8px;flex-shrink:0}
+.gbtn.pressed{background:#FFE08A}
+#gName{font-size:20px;padding:8px 12px;border:2px solid #ddd;border-radius:12px;width:200px;font-family:inherit}
+.gnote{font-size:14px;color:#777;margin-top:10px;line-height:1.4}
 </style>
 </head>
 <body>
@@ -181,16 +282,19 @@ button{font-family:inherit;border:0;background:none;color:inherit;cursor:pointer
 <div id="home" class="screen on">
   <div class="logo"><span class="l1">P</span><span class="l2">l</span><span class="l3">a</span><span class="l4">y</span>&nbsp;<span class="l5">T</span><span class="l6">i</span><span class="l7">m</span><span class="l8">e</span></div>
   <button class="speakbtn" id="speakToggle">&#x1F50A;</button>
+  <button class="lockbtn" id="lockBtn">&#x1F512;</button>
   <div class="tiles flex center">
+    <button class="tile t8 flex center" data-go="games"><span class="ic">&#x1F9E0;</span>Brain Games</button>
+    <button class="tile t9 flex center" data-go="trace"><span class="ic">&#x270F;&#xFE0F;</span>Write</button>
+    <button class="tile t3 flex center" data-go="cards"><span class="ic">&#x1F524;</span>Flashcards</button>
     <button class="tile t1 flex center" data-go="draw"><span class="ic">&#x1F3A8;</span>Draw</button>
     <button class="tile t2 flex center" data-go="color"><span class="ic">&#x1F420;</span>Colouring</button>
-    <button class="tile t3 flex center" data-go="cards"><span class="ic">&#x1F524;</span>Flashcards</button>
+    <button class="tile t6 flex center" data-go="memory"><span class="ic">&#x1F0CF;</span>Memory</button>
     <button class="tile t4 flex center" data-go="sounds"><span class="ic">&#x1F42E;</span>Animals</button>
     <button class="tile t5 flex center" data-go="bubbles"><span class="ic">&#x1F388;</span>Bubbles</button>
-    <button class="tile t6 flex center" data-go="memory"><span class="ic">&#x1F0CF;</span>Memory</button>
     <button class="tile t7 flex center" data-go="music"><span class="ic">&#x1F3B9;</span>Music</button>
   </div>
-  <div class="grownups">Grown-ups: turn on Guided Access (Settings &rsaquo; General &rsaquo; Accessibility), then triple-click Home to keep little ones in here.</div>
+  <div class="grownups">Grown-ups: press and hold &#x1F512; for levels and progress. Guided Access (triple-click Home) keeps little ones in here.</div>
 </div>
 
 <!-- DRAW -->
@@ -255,9 +359,10 @@ button{font-family:inherit;border:0;background:none;color:inherit;cursor:pointer
 <div id="memory" class="screen">
   <button class="homebtn">&#x1F3E0;</button>
   <div class="mbar flex">
-    <button class="pill flex center" data-pairs="6">Easy</button>
-    <button class="pill flex center" data-pairs="8">Medium</button>
-    <button class="pill flex center" data-pairs="12">Hard</button>
+    <button class="pill flex center" data-pairs="3">&#x1F423; Easy</button>
+    <button class="pill flex center" data-pairs="6">&#x1F425; Medium</button>
+    <button class="pill flex center" data-pairs="8">&#x1F414; Hard</button>
+    <button class="pill flex center" data-pairs="12">&#x1F981; Super</button>
     <span class="moves" id="moves"></span>
   </div>
   <div class="mgrid flex" id="mgrid"></div>
@@ -271,7 +376,36 @@ button{font-family:inherit;border:0;background:none;color:inherit;cursor:pointer
   <div class="xylo flex" id="xylo"></div>
 </div>
 
+<!-- BRAIN GAMES -->
+<div id="games" class="screen">
+  <button class="homebtn">&#x1F3E0;</button>
+  <div class="title">Brain Games</div>
+  <div class="subjects flex center" id="subjects"></div>
+</div>
+<div id="quiz" class="screen">
+  <button class="homebtn" data-to="games">&#x25C0;&#xFE0E;</button>
+  <div class="qtop flex"><span class="qsubj" id="qSubj"></span><span class="qlvl" id="qLvl"></span><span class="qdots" id="qDots"></span></div>
+  <div class="qstars" id="qStars"></div>
+  <div class="qwrap"><div class="qprompt" id="qPrompt"></div><div class="qchoices" id="qChoices"></div></div>
+</div>
+
+<!-- WRITE -->
+<div id="trace" class="screen">
+  <button class="homebtn">&#x1F3E0;</button>
+  <div class="tsets flex" id="tsets"></div>
+  <div id="tstage"><canvas id="tguide"></canvas><canvas id="tink"></canvas></div>
+  <div class="tbar flex">
+    <button class="tbtn flex center" id="tPrev">&#x25C0;&#xFE0E;</button>
+    <button class="tbtn flex center" id="tClear">&#x1F504;</button>
+    <div class="tcount" id="tCount"></div>
+    <button class="tbtn flex center" id="tHear">&#x1F50A;</button>
+    <button class="tbtn flex center" id="tCheck">&#x2714;&#xFE0F;</button>
+    <button class="tbtn flex center" id="tNext">&#x25B6;&#xFE0E;</button>
+  </div>
+</div>
+
 <!-- overlays -->
+<div class="ov center" id="grownOv"><div class="panel gpanel scrolly" id="grownBody"></div></div>
 <div class="ov center" id="confirmOv"><div class="panel"><h2 id="confirmMsg">Are you sure?</h2><button class="bigbtn yes" id="confirmYes">Yes</button><button class="bigbtn no" id="confirmNo">No</button></div></div>
 <div class="ov center" id="pagesOv"><div class="panel"><h2>Pick a picture to colour</h2><div class="pagegrid flex" id="pagegrid"></div></div></div>
 <div class="ov center" id="saveOv"><div class="panel"><img id="saveimg" alt="Your picture"><div class="hint">Press and hold the picture, then tap <b>Save Image</b><br>to keep it in Photos.</div><button class="bigbtn blue" id="saveClose">Done</button></div></div>
@@ -322,7 +456,8 @@ button{font-family:inherit;border:0;background:none;color:inherit;cursor:pointer
   }
 
   // stop the whole page from rubber-banding / zooming
-  document.addEventListener('touchmove', function (e) { e.preventDefault(); }, NOPASSIVE);
+  function inScrolly(t) { while (t && t !== document) { if (t.classList && t.classList.contains('scrolly')) return true; t = t.parentNode; } return false; }
+  document.addEventListener('touchmove', function (e) { if (inScrolly(e.target)) return; e.preventDefault(); }, NOPASSIVE);
   document.addEventListener('gesturestart', function (e) { e.preventDefault(); }, false);
 
   /* ================= sound ================= */
@@ -374,12 +509,33 @@ button{font-family:inherit;border:0;background:none;color:inherit;cursor:pointer
   /* ================= speech ================= */
   var talkOn = store('talk') !== 'off';
   var synth = window.speechSynthesis;
-  var lang = navigator.language || 'en-US';
-  if (lang.indexOf('en') !== 0) lang = 'en-US';
+  var voice = null;
+  function pickVoice() {
+    if (!synth || !synth.getVoices) return;
+    var vs = synth.getVoices(), want = (navigator.language || 'en-US').replace('_', '-'), i, l;
+    if (!vs || !vs.length) return;
+    var tries = [want, 'en-US', 'en-GB', 'en-AU', 'en'];
+    for (var t = 0; t < tries.length; t++) {
+      for (i = 0; i < vs.length; i++) { l = (vs[i].lang || '').replace('_', '-'); if (l === tries[t] || (tries[t] === 'en' && l.indexOf('en') === 0)) { voice = vs[i]; return; } }
+    }
+  }
+  if (synth) { pickVoice(); try { synth.onvoiceschanged = pickVoice; } catch (e) {} }
+  var speechReady = false;
+  function unlockSpeech() {
+    if (speechReady || !synth || !window.SpeechSynthesisUtterance) return;
+    speechReady = true;
+    try { var u = new SpeechSynthesisUtterance(' '); u.volume = 0; synth.speak(u); } catch (e) {}
+  }
+  document.addEventListener('touchend', unlockSpeech, false);
   function say(text) {
     if (!talkOn || !synth || !window.SpeechSynthesisUtterance) return;
     var go = function () {
-      try { var u = new SpeechSynthesisUtterance(text); u.lang = lang; u.pitch = 1.15; synth.speak(u); } catch (e) {}
+      try {
+        var u = new SpeechSynthesisUtterance(text);
+        if (!voice) pickVoice();
+        if (voice) { u.voice = voice; u.lang = voice.lang; }
+        u.pitch = 1.1; u.rate = 0.9; synth.speak(u);
+      } catch (e) {}
     };
     if (synth.speaking || synth.pending) { synth.cancel(); setTimeout(go, 90); } else go();
   }
@@ -396,7 +552,7 @@ button{font-family:inherit;border:0;background:none;color:inherit;cursor:pointer
     current = name;
     if (enter[name]) enter[name]();
   }
-  each(qa('.homebtn'), function (b) { tap(b, function () { sfx.blip(); show('home'); }); });
+  each(qa('.homebtn'), function (b) { tap(b, function () { sfx.blip(); show(b.getAttribute('data-to') || 'home'); }); });
   each(qa('[data-go]'), function (b) {
     tap(b, function () {
       var g = b.getAttribute('data-go'); sfx.blip();
@@ -497,9 +653,18 @@ button{font-family:inherit;border:0;background:none;color:inherit;cursor:pointer
   enter.draw = function () { sizeCanvases(); };
 
   function pushUndo() {
-    try { undos.push(pctx.getImageData(0, 0, paint.width, paint.height)); if (undos.length > 4) undos.shift(); } catch (e) {}
+    try {
+      var c = document.createElement('canvas'); c.width = paint.width; c.height = paint.height;
+      c.getContext('2d').drawImage(paint, 0, 0);
+      undos.push(c); if (undos.length > 3) undos.shift();
+    } catch (e) {}
   }
-  tap($('undoBtn'), function () { if (undos.length) { pctx.putImageData(undos.pop(), 0, 0); sfx.blip(); } });
+  tap($('undoBtn'), function () {
+    if (!undos.length) return;
+    var c = undos.pop();
+    pctx.save(); pctx.setTransform(1, 0, 0, 1, 0, 0); pctx.clearRect(0, 0, paint.width, paint.height); pctx.drawImage(c, 0, 0); pctx.restore();
+    sfx.blip();
+  });
   tap($('clearBtn'), function () {
     ask('Start a new picture?', function () { pushUndo(); pctx.clearRect(0, 0, cw, ch); sfx.pop(); });
   });
@@ -557,7 +722,7 @@ button{font-family:inherit;border:0;background:none;color:inherit;cursor:pointer
     if (line[i0 + 3] > 110) return;
     var fc = hexRGB(color), sr = d[i0], sg = d[i0 + 1], sb = d[i0 + 2], sa = d[i0 + 3];
     if (sa > 200 && Math.abs(sr - fc[0]) + Math.abs(sg - fc[1]) + Math.abs(sb - fc[2]) < 12) return;
-    undos.push(pctx.getImageData(0, 0, W, H)); if (undos.length > 4) undos.shift();
+    pushUndo();
     var clear = sa < 40, seen = new Uint8Array(W * H);
     var ok = function (x, y) {
       var k = y * W + x; if (seen[k]) return false;
@@ -596,7 +761,7 @@ button{font-family:inherit;border:0;background:none;color:inherit;cursor:pointer
       circ(c, 330, 330, 30); circ(c, 338, 330, 12, true);
       c.beginPath(); c.arc(300, 395, 34, 0.2, 1.3); c.stroke();
       c.beginPath(); c.moveTo(390, 228); c.quadraticCurveTo(470, 110, 570, 240); c.stroke();
-      c.beginPath(); c.moveTo(500, 232); c.quadraticCurveTo(545, 370, 500, 508); c.stroke();
+      c.beginPath(); c.moveTo(500, 220); c.quadraticCurveTo(545, 370, 500, 520); c.stroke();
       c.beginPath(); c.moveTo(585, 250); c.quadraticCurveTo(622, 370, 585, 490); c.stroke();
       circ(c, 190, 210, 24); circ(c, 140, 135, 16); circ(c, 200, 80, 11);
       c.beginPath(); c.moveTo(0, 690); c.quadraticCurveTo(250, 640, 500, 690); c.quadraticCurveTo(750, 740, 1000, 690); c.stroke();
@@ -642,7 +807,7 @@ button{font-family:inherit;border:0;background:none;color:inherit;cursor:pointer
       circ(c, 500, 285, 56); circ(c, 500, 285, 38);
       poly(c, [404, 410, 320, 530, 320, 600, 410, 520], true);
       poly(c, [596, 410, 680, 530, 680, 600, 590, 520], true);
-      poly(c, [430, 520, 570, 520, 550, 560, 450, 560], true);
+      poly(c, [430, 520, 570, 520, 550, 560, 450, 560]);
       c.beginPath(); c.moveTo(455, 560); c.quadraticCurveTo(468, 645, 500, 705); c.quadraticCurveTo(532, 645, 545, 560); c.stroke();
       c.beginPath(); c.moveTo(480, 562); c.quadraticCurveTo(488, 615, 500, 645); c.quadraticCurveTo(512, 615, 520, 562); c.stroke();
       star(c, 150, 150, 45); star(c, 840, 110, 32); star(c, 180, 560, 32); star(c, 860, 470, 48); star(c, 300, 330, 20);
@@ -689,14 +854,28 @@ button{font-family:inherit;border:0;background:none;color:inherit;cursor:pointer
   var ABC = [['A', 'Apple', '🍎'], ['B', 'Ball', '⚽️'], ['C', 'Cat', '🐱'], ['D', 'Dog', '🐶'], ['E', 'Elephant', '🐘'], ['F', 'Fish', '🐟'],
     ['G', 'Grapes', '🍇'], ['H', 'House', '🏠'], ['I', 'Ice cream', '🍦'], ['J', 'Jeans', '👖'], ['K', 'Key', '🔑'], ['L', 'Lemon', '🍋'],
     ['M', 'Moon', '🌙'], ['N', 'Nose', '👃'], ['O', 'Octopus', '🐙'], ['P', 'Pig', '🐷'], ['Q', 'Queen', '👑'], ['R', 'Rainbow', '🌈'],
-    ['S', 'Star', '⭐️'], ['T', 'Tiger', '🐯'], ['U', 'Umbrella', '☂️'], ['V', 'Violin', '🎻'], ['W', 'Whale', '🐳'], ['X', 'X marks the spot', '❌'],
-    ['Y', 'Yacht', '⛵️'], ['Z', 'Zzz, sleepy', '💤']];
+    ['S', 'Star', '⭐️'], ['T', 'Tiger', '🐯'], ['U', 'Umbrella', '☂️'], ['V', 'Van', '🚐'], ['W', 'Whale', '🐳'], ['X', 'Box', '📦', 'X. Box ends with X'],
+    ['Y', 'Yellow', '💛'], ['Z', 'Zebra', '🦓']];
+  // the speech voice can read a lone "A" as "uh"
+  function letterName(l) { return l === 'A' ? 'ay' : l; }
+  function markLetter(word, l) {
+    var i = word.toLowerCase().indexOf(l.toLowerCase());
+    if (i < 0) return word;
+    return word.slice(0, i) + '<b>' + word.charAt(i) + '</b>' + word.slice(i + 1);
+  }
+  function article(w) { return (/^[aeiou]/i.test(w) ? 'An ' : 'A ') + w.toLowerCase(); }
+  var FEELINGS = [['😀', 'Happy', 'Happy! This face is happy.'], ['😢', 'Sad', 'Sad. This face is sad.'], ['😠', 'Angry', 'Angry. This face is angry.'],
+    ['😨', 'Scared', 'Scared. This face is scared.'], ['😮', 'Surprised', 'Surprised! Oh, wow!'], ['😴', 'Sleepy', 'Sleepy. This face is sleepy.'],
+    ['😜', 'Silly', 'Silly! This face is being silly.'], ['😌', 'Calm', 'Calm. This face feels calm.']];
+  var BODY = [['👀', 'Eyes', 'Eyes. We see with our eyes.'], ['👂', 'Ear', 'Ear. We hear with our ears.'], ['👃', 'Nose', 'Nose. We smell with our nose.'],
+    ['👄', 'Mouth', 'Mouth. We eat and talk with our mouth.'], ['👅', 'Tongue', 'Tongue. We taste with our tongue.'], ['🦷', 'Tooth', 'Tooth. Brush your teeth!'],
+    ['✋', 'Hand', 'Hand. Can you wave hello?'], ['💪', 'Arm', 'Arm. Show me your strong arm!'], ['🦵', 'Leg', 'Leg. Can you stand on one leg?'], ['🦶', 'Foot', 'Foot. Can you stomp your feet?']];
   var NUMWORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
   var NUMOBJ = ['🍎', '⭐️', '🐟', '🎈', '🌸', '🍓', '🐞', '🚗', '🍪', '🐤'];
   var NUMCOL = ['#FF6B6B', '#FF9F43', '#F7B731', '#20BF6B', '#0FB9B1', '#45AAF2', '#4B7BEC', '#A55EEA', '#FF6FB5', '#2D3047'];
   var COLOURS = [['Red', '#E53935', '🍎', 'an apple'], ['Orange', '#FB8C00', '🍊', 'an orange'], ['Yellow', '#FDD835', '🍌', 'a banana'],
     ['Green', '#43A047', '🐸', 'a frog'], ['Blue', '#1E88E5', '🐳', 'a whale'], ['Purple', '#8E24AA', '🍇', 'grapes'], ['Pink', '#EC407A', '🌸', 'a flower'],
-    ['Brown', '#795548', '🐻', 'a bear'], ['Black', '#212121', '🎩', 'a top hat'], ['White', '#FFFFFF', '☁️', 'a cloud'], ['Grey', '#9E9E9E', '🐘', 'an elephant']];
+    ['Brown', '#795548', '🐻', 'a bear'], ['Black', '#212121', '🕶', 'sunglasses'], ['White', '#FFFFFF', '☁️', 'a cloud'], ['Grey', '#9E9E9E', '🐘', 'an elephant']];
   function ptsPoly(n, r, rot) { var s = ''; for (var i = 0; i < n; i++) { var a = (rot || -Math.PI / 2) + i * 2 * Math.PI / n; s += (100 + Math.cos(a) * r).toFixed(1) + ',' + (104 + Math.sin(a) * r).toFixed(1) + ' '; } return s; }
   function starPts() { var s = ''; for (var i = 0; i < 10; i++) { var a = -Math.PI / 2 + i * Math.PI / 5, r = i % 2 ? 40 : 95; s += (100 + Math.cos(a) * r).toFixed(1) + ',' + (108 + Math.sin(a) * r).toFixed(1) + ' '; } return s; }
   var SH = ' stroke="rgba(0,0,0,.14)" stroke-width="6" stroke-linejoin="round"';
@@ -716,8 +895,8 @@ button{font-family:inherit;border:0;background:none;color:inherit;cursor:pointer
   var DECKS = {
     abc: { label: 'ABC', items: ABC,
       front: function (it) { return '<div class="big">' + it[0] + '<small>' + it[0].toLowerCase() + '</small></div><div class="tag">Tap to flip</div>'; },
-      back: function (it) { return '<div class="emo">' + it[2] + '</div><div class="word"><b>' + it[1].charAt(0) + '</b>' + it[1].slice(1) + '</div>'; },
-      sayF: function (it) { return it[0]; }, sayB: function (it) { return it[0] + ', is for, ' + it[1]; } },
+      back: function (it) { return '<div class="emo">' + it[2] + '</div><div class="word">' + markLetter(it[1], it[0]) + '</div>'; },
+      sayF: function (it) { return letterName(it[0]); }, sayB: function (it) { return it[3] || (letterName(it[0]) + ', is for, ' + it[1]); } },
     num: { label: '123', items: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
       front: function (n) { return '<div class="big" style="color:' + NUMCOL[n - 1] + '">' + n + '</div><div class="tag">Tap to flip</div>'; },
       back: function (n) {
@@ -726,24 +905,32 @@ button{font-family:inherit;border:0;background:none;color:inherit;cursor:pointer
         return h + '</div><div class="word" style="color:' + NUMCOL[n - 1] + '">' + n + ' ' + NUMWORDS[n] + '</div><div class="tag">Tap each one to count!</div>';
       },
       sayF: function (n) { return String(n); }, sayB: function (n) { return NUMWORDS[n]; } },
-    col: { label: 'Colours', items: COLOURS,
+    col: { label: 'Colours', icon: '🎨', items: COLOURS,
       front: function (it) { return '<div class="blob" style="background:' + it[1] + '"></div><div class="tag">What colour is this?</div>'; },
       back: function (it) { return '<div class="emo">' + it[2] + '</div><div class="word" style="color:' + (it[0] === 'White' ? '#9aa' : it[1]) + '">' + it[0] + '</div>'; },
       sayF: function () { return 'What colour is this?'; }, sayB: function (it) { return it[0] + ', like ' + it[3]; } },
-    sha: { label: 'Shapes', items: SHAPES,
+    sha: { label: 'Shapes', icon: '🔺', items: SHAPES,
       front: function (it) { return svg(it[1]) + '<div class="tag">What shape is this?</div>'; },
       back: function (it) { return svg(it[1], 'shape" style="width:190px;height:190px') + '<div class="word">' + it[0] + '</div>'; },
-      sayF: function () { return 'What shape is this?'; }, sayB: function (it) { return 'A ' + it[0]; } },
-    ani: { label: 'Animals', items: ANIMALS,
+      sayF: function () { return 'What shape is this?'; }, sayB: function (it) { return article(it[0]); } },
+    ani: { label: 'Animals', icon: '🐶', items: ANIMALS,
       front: function (it) { return '<div class="emo" style="font-size:210px">' + it[0] + '</div><div class="tag">Who is this?</div>'; },
       back: function (it) { return '<div class="emo" style="font-size:120px">' + it[0] + '</div><div class="word">' + it[1] + '</div><div class="word" style="font-size:40px;color:#FF9F43">“' + it[2] + '!”</div>'; },
-      sayF: function () { return 'Who is this?'; }, sayB: function (it) { return 'The ' + it[1].toLowerCase() + ' says, ' + it[2]; } }
+      sayF: function () { return 'Who is this?'; }, sayB: function (it) { return 'The ' + it[1].toLowerCase() + ' says, ' + it[2]; } },
+    feel: { label: 'Feelings', icon: '😀', items: FEELINGS,
+      front: function (it) { return '<div class="emo" style="font-size:230px">' + it[0] + '</div><div class="tag">How does this face feel?</div>'; },
+      back: function (it) { return '<div class="emo" style="font-size:150px">' + it[0] + '</div><div class="word">' + it[1] + '</div><div class="tag">Can you make this face?</div>'; },
+      sayF: function () { return 'How does this face feel?'; }, sayB: function (it) { return it[2] + ' Can you make this face?'; } },
+    body: { label: 'Body', icon: '✋', items: BODY,
+      front: function (it) { return '<div class="emo" style="font-size:230px">' + it[0] + '</div><div class="tag">What is this?</div>'; },
+      back: function (it) { return '<div class="emo" style="font-size:150px">' + it[0] + '</div><div class="word">' + it[1] + '</div><div class="tag">Point to yours!</div>'; },
+      sayF: function () { return 'What is this?'; }, sayB: function (it) { return it[2] + ' Point to yours!'; } }
   };
   var deckKey = 'abc', order = [], ci = 0, flipped = false, counted = 0, shuffled = false;
   var card = $('card');
   (function () {
     var h = '', k;
-    for (k in DECKS) if (DECKS.hasOwnProperty(k)) h += '<button class="deck" data-d="' + k + '">' + DECKS[k].label + '</button>';
+    for (k in DECKS) if (DECKS.hasOwnProperty(k)) h += '<button class="deck' + (DECKS[k].icon ? ' hasicon' : '') + '" data-d="' + k + '">' + (DECKS[k].icon ? '<span class="di">' + DECKS[k].icon + '</span>' : '') + '<span class="dl">' + DECKS[k].label + '</span></button>';
     $('decks').innerHTML = h;
     each(qa('.deck'), function (b) { tap(b, function () { pickDeck(b.getAttribute('data-d')); sfx.blip(); }); });
   })();
@@ -878,21 +1065,22 @@ button{font-family:inherit;border:0;background:none;color:inherit;cursor:pointer
 
   /* ================= MEMORY ================= */
   var MEMO = ['🐶', '🐱', '🐭', '🐰', '🐻', '🐼', '🐨', '🐯', '🐮', '🐷', '🐸', '🐵', '🐔', '🐧', '🐙', '🐳'];
-  var mPairs = 6, mOpen = [], mLock = false, mFound = 0, mMoves = 0;
+  var mPairs = 3, mOpen = [], mLock = false, mFound = 0, mMoves = 0;
   function newMemory(pairs) {
     mPairs = pairs || mPairs; mOpen = []; mLock = false; mFound = 0; mMoves = 0;
     each(qa('[data-pairs]'), function (b) { b.classList.toggle('sel', +b.getAttribute('data-pairs') === mPairs); });
     $('moves').innerHTML = '';
     var pick = shuffle(MEMO.slice()).slice(0, mPairs), deck = shuffle(pick.concat(pick));
-    var g = $('mgrid'), cols = mPairs === 6 ? 4 : mPairs === 8 ? 4 : 6, rows = Math.ceil(deck.length / cols);
-    if (window.innerHeight > window.innerWidth) { cols = mPairs === 12 ? 4 : mPairs === 8 ? 4 : 3; rows = Math.ceil(deck.length / cols); }
+    var g = $('mgrid'), cols = { 3: 3, 6: 4, 8: 4, 12: 6 }[mPairs] || 4;
+    if (window.innerHeight > window.innerWidth) cols = { 3: 2, 6: 3, 8: 4, 12: 4 }[mPairs] || 3;
+    var rows = Math.ceil(deck.length / cols);
     var W = g.clientWidth || window.innerWidth - 40, H = g.clientHeight || window.innerHeight - 116;
     var s = Math.floor(Math.min((W - cols * 14) / cols, (H - rows * 14) / rows, 190));
-    var h = '';
+    var h = '<div class="mwrap" style="width:' + (cols * (s + 14)) + 'px">';
     for (var i = 0; i < deck.length; i++) {
       h += '<div class="mcard" data-e="' + deck[i] + '" style="width:' + s + 'px;height:' + s + 'px"><div class="in"><div class="f f1 flex center" style="font-size:' + Math.round(s * 0.4) + 'px">?</div><div class="f f2 flex center" style="font-size:' + Math.round(s * 0.62) + 'px">' + deck[i] + '</div></div></div>';
     }
-    g.innerHTML = h;
+    g.innerHTML = h + '</div>';
     each(qa('.mcard', g), function (c) { tap(c, function () { flipMem(c); }); });
   }
   function flipMem(c) {
@@ -915,10 +1103,11 @@ button{font-family:inherit;border:0;background:none;color:inherit;cursor:pointer
 
   /* ================= MUSIC ================= */
   var NOTES = [['C', 523.25, '#FF5E57'], ['D', 587.33, '#FF9F43'], ['E', 659.25, '#FECA57'], ['F', 698.46, '#2ED573'], ['G', 783.99, '#1DD1A1'], ['A', 880.0, '#48DBFB'], ['B', 987.77, '#5F7CFF'], ['C', 1046.5, '#B76CFF']];
-  var SONGS = [['Free play', null],
-    ['Twinkle Twinkle', [0, 0, 4, 4, 5, 5, 4, 3, 3, 2, 2, 1, 1, 0, 4, 4, 3, 3, 2, 2, 1, 4, 4, 3, 3, 2, 2, 1, 0, 0, 4, 4, 5, 5, 4, 3, 3, 2, 2, 1, 1, 0]],
-    ['Mary’s Lamb', [2, 1, 0, 1, 2, 2, 2, 1, 1, 1, 2, 4, 4, 2, 1, 0, 1, 2, 2, 2, 2, 1, 1, 2, 1, 0]],
-    ['Row Your Boat', [0, 0, 0, 1, 2, 2, 1, 2, 3, 4, 7, 7, 7, 4, 4, 4, 2, 2, 2, 0, 0, 0, 4, 3, 2, 1, 0]]];
+  var SONGS = [['🎵 Free play', null],
+    ['⭐ Twinkle', [0, 0, 4, 4, 5, 5, 4, 3, 3, 2, 2, 1, 1, 0, 4, 4, 3, 3, 2, 2, 1, 4, 4, 3, 3, 2, 2, 1, 0, 0, 4, 4, 5, 5, 4, 3, 3, 2, 2, 1, 1, 0]],
+    ['🐑 Mary’s Lamb', [2, 1, 0, 1, 2, 2, 2, 1, 1, 1, 2, 4, 4, 2, 1, 0, 1, 2, 2, 2, 2, 1, 1, 2, 1, 0]],
+    ['🚣 Row Your Boat', [0, 0, 0, 1, 2, 2, 1, 2, 3, 4, 7, 7, 7, 4, 4, 4, 2, 2, 2, 0, 0, 0, 4, 3, 2, 1, 0]]];
+  var SONGNAMES = ['', 'Twinkle Twinkle Little Star', 'Mary had a little lamb', 'Row row row your boat'];
   var song = null, songPos = 0;
   (function () {
     var x = $('xylo'), h = '', i;
@@ -931,7 +1120,7 @@ button{font-family:inherit;border:0;background:none;color:inherit;cursor:pointer
         var s = SONGS[+b.getAttribute('data-song')];
         each(qa('[data-song]'), function (o) { o.classList.toggle('sel', o === b); });
         song = s[1]; songPos = 0; markNext(); sfx.blip();
-        if (song) say("Let's play " + s[0] + '. Tap the glowing bar!');
+        if (song) say("Let's play " + SONGNAMES[+b.getAttribute('data-song')] + '. Tap the bar with the finger!');
       });
     });
     var bars = qa('.bar', x), owner = {};
@@ -973,6 +1162,635 @@ button{font-family:inherit;border:0;background:none;color:inherit;cursor:pointer
       if (!on && arrow) b.removeChild(arrow);
     });
   }
+
+  /* ================= BRAIN GAMES (levels go up and down on their own) ================= */
+  function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
+  function ri(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+  function sample(a, n, not) {
+    var c = [];
+    for (var i = 0; i < a.length; i++) if (!not || not.indexOf(a[i]) < 0) c.push(a[i]);
+    return shuffle(c).slice(0, n);
+  }
+  function listSay(words) {
+    if (words.length < 2) return words.join('');
+    return words.slice(0, -1).join(', ') + ', or ' + words[words.length - 1];
+  }
+  function escH(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  var PRAISE = ['Great job!', 'You got it!', 'Awesome!', 'Super!', 'Well done!', 'Fantastic!', 'Brilliant!', 'Way to go!'];
+  function loadP() {
+    var o = null;
+    try { o = JSON.parse(store('progress') || 'null'); } catch (e) { o = null; }
+    o = o || {}; o.skills = o.skills || {}; o.trace = o.trace || {}; o.name = o.name || '';
+    return o;
+  }
+  var P = loadP();
+  function saveP() { store('progress', JSON.stringify(P)); }
+  function sk(id) {
+    var s = P.skills[id];
+    if (!s) s = P.skills[id] = { lvl: 1, streak: 0, recent: [], stars: 0, right: 0, tries: 0 };
+    return s;
+  }
+  function praise() {
+    var p = pick(PRAISE);
+    if (P.name && Math.random() < 0.45) p = p.replace(/!$/, ', ' + P.name + '!');
+    return p;
+  }
+  function mk(opts, ans, cls, render) {
+    opts = shuffle(opts.slice());
+    var out = [];
+    for (var i = 0; i < opts.length; i++) out.push({ h: render ? render(opts[i]) : String(opts[i]), ok: opts[i] === ans, cls: cls || '' });
+    return out;
+  }
+
+  /* ---- word banks (every emoji here exists on iOS 12) ---- */
+  var AZ = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  // small letters that are easy to mix up
+  var CONF = { b: 'dpq', d: 'bpq', p: 'qbd', q: 'pdb', m: 'nw', n: 'mhu', u: 'nv', w: 'mv', i: 'lj', l: 'it', h: 'nk', f: 't', t: 'f', a: 'oe', e: 'ac', o: 'ac' };
+  // pictures by the sound they start with (no sh/ch/th starts, no soft c or g)
+  var BANK = {
+    A: [['ant', '🐜'], ['apple', '🍎']], B: [['bus', '🚌'], ['bee', '🐝'], ['bear', '🐻'], ['banana', '🍌'], ['bed', '🛏️'], ['book', '📕'], ['ball', '⚽️']],
+    C: [['cat', '🐱'], ['car', '🚗'], ['cake', '🍰'], ['cup', '🥤'], ['cow', '🐮'], ['corn', '🌽'], ['cookie', '🍪']],
+    D: [['dog', '🐶'], ['duck', '🦆'], ['donut', '🍩']], E: [['egg', '🥚'], ['elephant', '🐘']],
+    F: [['fish', '🐟'], ['fox', '🦊'], ['frog', '🐸'], ['fire', '🔥']], G: [['goat', '🐐'], ['grapes', '🍇'], ['gift', '🎁']],
+    H: [['hat', '👒'], ['hen', '🐔'], ['horse', '🐴'], ['house', '🏠']], J: [['jeans', '👖']],
+    K: [['key', '🔑'], ['koala', '🐨'], ['kangaroo', '🦘']], L: [['lion', '🦁'], ['lemon', '🍋'], ['leaf', '🍃']],
+    M: [['moon', '🌙'], ['mouse', '🐭'], ['monkey', '🐵'], ['milk', '🥛'], ['map', '🗺️']], N: [['nose', '👃'], ['nut', '🥜']],
+    O: [['octopus', '🐙']], P: [['pig', '🐷'], ['pizza', '🍕'], ['pear', '🍐'], ['pen', '🖊️'], ['penguin', '🐧']],
+    R: [['rabbit', '🐰'], ['rainbow', '🌈'], ['ring', '💍'], ['rocket', '🚀']],
+    S: [['sun', '☀️'], ['snake', '🐍'], ['star', '⭐️'], ['sock', '🧦'], ['snail', '🐌']],
+    T: [['tiger', '🐯'], ['tree', '🌳'], ['train', '🚂'], ['turtle', '🐢']], U: [['umbrella', '☂️']],
+    V: [['van', '🚐'], ['volcano', '🌋']], W: [['web', '🕸️'], ['watermelon', '🍉'], ['whale', '🐳']],
+    Y: [['yarn', '🧶']], Z: [['zebra', '🦓']]
+  };
+  var BANKL = []; for (var bl in BANK) if (BANK.hasOwnProperty(bl)) BANKL.push(bl);
+  function snd(l) { return l === 'C' || l === 'K' ? 'k' : l; }
+  var CVC = [['cat', '🐱'], ['dog', '🐶'], ['pig', '🐷'], ['hen', '🐔'], ['fox', '🦊'], ['bat', '🦇'], ['bug', '🐛'], ['sun', '☀️'], ['bus', '🚌'], ['van', '🚐'],
+    ['box', '📦'], ['cup', '🥤'], ['pen', '🖊️'], ['map', '🗺️'], ['hat', '👒'], ['bed', '🛏️'], ['web', '🕸️'], ['cap', '🧢'], ['nut', '🥜'], ['rat', '🐀']];
+  var RHYMES = [[['cat', '🐱'], ['hat', '👒'], ['bat', '🦇']], [['bee', '🐝'], ['tree', '🌳'], ['key', '🔑']], [['star', '⭐️'], ['car', '🚗']],
+    [['moon', '🌙'], ['spoon', '🥄']], [['bear', '🐻'], ['pear', '🍐']], [['fox', '🦊'], ['box', '📦'], ['socks', '🧦']],
+    [['snake', '🐍'], ['cake', '🍰']], [['mouse', '🐭'], ['house', '🏠']], [['goat', '🐐'], ['boat', '⛵️']], [['whale', '🐳'], ['snail', '🐌']],
+    [['dog', '🐶'], ['frog', '🐸']], [['bug', '🐛'], ['mug', '☕️']], [['bed', '🛏️'], ['sled', '🛷']], [['clock', '⏰'], ['lock', '🔒']], [['rain', '🌧️'], ['train', '🚂']]];
+  var SIGHT = ['the', 'and', 'is', 'you', 'see', 'we', 'go', 'it', 'in', 'me', 'my', 'up', 'can', 'look', 'to', 'he', 'like', 'said', 'no', 'yes', 'big', 'little', 'play', 'here'];
+  var CNT = [['🍎', 'apples', 'apple'], ['⭐️', 'stars', 'star'], ['🐟', 'fish', 'fish'], ['🎈', 'balloons', 'balloon'], ['🌸', 'flowers', 'flower'], ['🍓', 'strawberries', 'strawberry'],
+    ['🐞', 'ladybugs', 'ladybug'], ['🚗', 'cars', 'car'], ['🍪', 'cookies', 'cookie'], ['🐤', 'chicks', 'chick'], ['🦆', 'ducks', 'duck'], ['🍩', 'donuts', 'donut']];
+  var CATS = {
+    fruit: ['🍎', '🍌', '🍇', '🍓', '🍐', '🍊', '🍋', '🍒', '🍑', '🍉'],
+    animal: ['🐶', '🐱', '🐭', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🐸', '🐵'],
+    vehicle: ['🚗', '🚕', '🚌', '🚓', '🚑', '🚒', '🚜', '🚲', '✈️', '🚂', '⛵️', '🚀'],
+    clothes: ['👕', '👖', '👗', '👟', '👒', '🧦', '🧤', '🧣', '🧢'],
+    weather: ['☀️', '🌧️', '❄️', '🌈', '☁️', '⛈️', '🌪️']
+  };
+  var PAIRS = [['🌧️', '☂️'], ['🐝', '🍯'], ['🐶', '🦴'], ['🐰', '🥕'], ['🐵', '🍌'], ['🔑', '🔒'], ['🧦', '👟'], ['🍪', '🥛'], ['🐔', '🥚'],
+    ['👶', '🍼'], ['✏️', '📄'], ['❄️', '⛄️'], ['🐟', '🌊'], ['🚗', '⛽️'], ['⚽️', '🥅'], ['🎂', '🎁']];
+  var SEQS = [['🥚', '🐣', '🐥', '🐔'], ['🌰', '🌱', '🌿', '🌳'], ['🌅', '☀️', '🌇', '🌙'], ['👶', '🧒', '🧑', '🧓'], ['☁️', '🌧️', '🌈'], ['☁️', '❄️', '⛄️'], ['🌑', '🌓', '🌕'],
+    ['1️⃣', '2️⃣', '3️⃣', '4️⃣'], ['😴', '⏰', '🌞'], ['🌧️', '🌱', '🌻'], ['🍞', '🥪'], ['🐛', '🦋'], ['🎈', '💥']];
+
+  /* ---- LETTERS ---- */
+  function letterQ(lv) {
+    var q = {}, t, o, w, l, i, pool;
+    if (lv === 1) {
+      t = pick(AZ); o = [t].concat(sample(AZ, 2, [t]));
+      q.id = 'a' + t; q.say = 'Find the letter ' + letterName(t) + '.'; q.instr = 'Find the letter you hear';
+      q.prompt = '<div class="pbig">👂</div>'; q.choices = mk(o, t, 'txt');
+    } else if (lv === 2 || lv === 3) {
+      t = pick(AZ).toLowerCase(); pool = (CONF[t] || '').split('');
+      o = [t].concat(sample(pool, 2));
+      while (o.length < 4) { l = pick(AZ).toLowerCase(); if (o.indexOf(l) < 0) o.push(l); }
+      q.id = 'b' + lv + t; q.choices = mk(o, t, 'txt');
+      if (lv === 2) { q.say = 'Find the small letter ' + letterName(t.toUpperCase()) + '.'; q.instr = 'Find the small letter you hear'; q.prompt = '<div class="pbig">👂</div>'; }
+      else { q.say = 'Find the small letter that matches this big letter.'; q.instr = 'Find the matching small letter'; q.prompt = '<div class="pbig ptxt">' + t.toUpperCase() + '</div>'; }
+    } else if (lv === 4 || lv === 5) {
+      l = pick(BANKL); w = pick(BANK[l]);
+      var letters = shuffle(BANKL.slice()), other = [];
+      for (i = 0; i < letters.length && other.length < (lv === 4 ? 2 : 3); i++) if (snd(letters[i]) !== snd(l)) other.push(letters[i]);
+      q.id = 'c' + lv + w[0];
+      if (lv === 4) {
+        var words = [w], names = [];
+        for (i = 0; i < other.length; i++) words.push(pick(BANK[other[i]]));
+        words = shuffle(words);
+        for (i = 0; i < words.length; i++) names.push(words[i][0]);
+        q.say = 'Which one starts with ' + letterName(l) + '? ' + listSay(names) + '?'; q.instr = 'Which one starts with this letter?';
+        q.prompt = '<div class="pbig ptxt">' + l + l.toLowerCase() + '</div>';
+        q.choices = [];
+        for (i = 0; i < words.length; i++) q.choices.push({ h: words[i][1], ok: words[i] === w, cls: 'pic' });
+      } else {
+        q.say = w[0] + '. What letter does ' + w[0] + ' start with?'; q.instr = 'What letter does it start with?';
+        q.prompt = '<div class="pbig">' + w[1] + '</div>';
+        q.choices = mk([l].concat(other), l, 'txt');
+      }
+    } else {
+      w = pick(CVC); var v = w[0].charAt(1);
+      o = [v].concat(sample(['a', 'e', 'i', 'o', 'u'], 2, [v]));
+      q.id = 'd' + w[0]; q.say = w[0] + '. What letter is missing?'; q.instr = 'Which letter is missing?';
+      q.prompt = '<div class="pbig" style="font-size:110px">' + w[1] + '</div><div class="pword">' + w[0].charAt(0) + '<span class="gap">_</span>' + w[0].charAt(2) + '</div>';
+      q.choices = mk(o, v, 'txt');
+    }
+    return q;
+  }
+
+  /* ---- NUMBERS ---- */
+  function nm(o, n) { return n === 1 ? o[2] : o[1]; }
+  function grp(em, n, sz, gone) {
+    var h = '<div class="grid5" style="max-width:' + (5 * (sz + 12)) + 'px">';
+    for (var i = 0; i < n; i++) h += '<span class="ci' + (gone && i >= n - gone ? ' gone' : '') + '" style="font-size:' + sz + 'px;width:' + (sz + 12) + 'px"><i>' + em + '</i></span>';
+    return h + '</div>';
+  }
+  function near(t, lo, hi, n) {
+    var o = [t], g = 0, x;
+    while (o.length < n && g++ < 60) { x = t + ri(-2, 2); if (x >= lo && x <= hi && o.indexOf(x) < 0) o.push(x); }
+    while (o.length < n) { x = ri(lo, hi); if (o.indexOf(x) < 0) o.push(x); }
+    return o;
+  }
+  function nbox(v, isQ) { return '<span class="nbox' + (isQ ? ' q' : '') + '">' + v + '</span>'; }
+  function numberQ(lv) {
+    var q = {}, t, o, a, b;
+    if (lv === 1 || lv === 4) {
+      var lo = lv === 1 ? 1 : 11, hi = lv === 1 ? 10 : 20;
+      t = ri(lo, hi);
+      q.id = 'n' + lv + t; q.say = 'Find the number ' + t + '.'; q.instr = 'Find the number you hear';
+      q.prompt = '<div class="pbig">👂</div>'; q.choices = mk(near(t, lo, hi, lv === 1 ? 3 : 4), t, 'txt');
+    } else if (lv === 2) {
+      o = pick(CNT); t = ri(3, 10);
+      q.id = 'c' + t; q.say = 'How many ' + o[1] + '? Count them!'; q.instr = 'How many? Count them!';
+      q.prompt = grp(o[0], t, 60); q.choices = mk(near(t, 1, 10, 3), t, 'txt');
+    } else if (lv === 3) {
+      o = pick(CNT); a = ri(1, 9);
+      do { b = ri(1, 10); } while (b === a);
+      var more = Math.random() < 0.6, first = more ? a > b : a < b;
+      q.id = 'm' + a + '-' + b; q.say = 'Which has ' + (more ? 'more' : 'fewer') + ' ' + o[1] + '?'; q.instr = 'Which has ' + (more ? 'more?' : 'fewer?');
+      q.prompt = '<div class="psent">' + (more ? 'more' : 'fewer') + '</div>';
+      q.choices = [{ h: grp(o[0], a, 40), ok: first, cls: 'grp' }, { h: grp(o[0], b, 40), ok: !first, cls: 'grp' }];
+    } else if (lv === 5) {
+      t = ri(2, 19); var after = Math.random() < 0.6, ans = after ? t + 1 : t - 1;
+      q.id = 'f' + t + after; q.say = 'What number comes ' + (after ? 'after ' : 'before ') + t + '?'; q.instr = 'What comes ' + (after ? 'after?' : 'before?');
+      q.prompt = '<div class="prow">' + (after ? nbox(t) + nbox('?', true) : nbox('?', true) + nbox(t)) + '</div>';
+      q.choices = mk(near(ans, 1, 20, 3), ans, 'txt');
+    } else if (lv === 6) {
+      o = pick(CNT); a = ri(1, 5); b = ri(1, Math.min(5, 10 - a));
+      q.id = 'p' + a + '-' + b; q.say = a + ' ' + nm(o, a) + ', and ' + b + ' more. How many altogether?'; q.instr = 'How many altogether?';
+      q.prompt = '<div class="prow">' + grp(o[0], a, 46) + '<span class="op">+</span>' + grp(o[0], b, 46) + '</div>';
+      q.choices = mk(near(a + b, 1, 10, 3), a + b, 'txt');
+    } else {
+      o = pick(CNT); t = ri(3, 10); a = ri(1, t - 1);
+      q.id = 's' + t + '-' + a; q.say = 'There are ' + t + ' ' + o[1] + '. ' + a + (a === 1 ? ' goes' : ' go') + ' away. How many are left?'; q.instr = 'How many are left?';
+      q.prompt = grp(o[0], t, 54, a); q.choices = mk(near(t - a, 0, 10, 3), t - a, 'txt');
+    }
+    return q;
+  }
+
+  /* ---- WORDS ---- */
+  function wordsQ(lv) {
+    var q = {}, w, o, i, set, pair, sets;
+    if (lv === 1) {
+      set = pick(RHYMES); pair = sample(set, 2); sets = sample(RHYMES, 2, [set]);
+      var cs = shuffle([pair[1], pick(sets[0]), pick(sets[1])]), names = [];
+      for (i = 0; i < cs.length; i++) names.push(cs[i][0]);
+      q.id = 'r' + pair[0][0]; q.say = 'Which one rhymes with ' + pair[0][0] + '? ' + listSay(names) + '?'; q.instr = 'Which one rhymes?';
+      q.prompt = '<div class="pbig">' + pair[0][1] + '</div>';
+      q.choices = [];
+      for (i = 0; i < cs.length; i++) q.choices.push({ h: cs[i][1], ok: cs[i] === pair[1], cls: 'pic' });
+    } else if (lv === 2) {
+      w = pick(SIGHT); o = [w].concat(sample(SIGHT, 3, [w]));
+      q.id = 'sw' + w; q.say = 'Find the word ' + w + '.'; q.instr = 'Find the word you hear';
+      q.prompt = '<div class="pbig">👂</div>'; q.choices = mk(o, w, 'word');
+    } else if (lv === 3 || lv === 5) {
+      w = pick(CVC); o = shuffle([w].concat(sample(CVC, 2, [w])));
+      q.id = 'w' + lv + w[0]; q.instr = 'Read it. Which picture is it?';
+      if (lv === 3) { q.say = 'Read the word. Which picture is it?'; q.prompt = '<div class="pword">' + w[0] + '</div>'; }
+      else {
+        q.say = 'Read it. Which picture is it?';
+        q.prompt = '<div class="psent">' + pick(['I see a #.', 'Look at the #!', 'I can see the #.', 'The # is big.', 'I like the #.']).replace('#', w[0]) + '</div>';
+      }
+      q.choices = [];
+      for (i = 0; i < o.length; i++) q.choices.push({ h: o[i][1], ok: o[i] === w, cls: 'pic' });
+    } else {
+      w = pick(CVC);
+      var lets = w[0].split(''), tiles = shuffle(lets.concat(sample('bcdfghjklmnprstvwz'.split(''), 2, lets))), sl = '';
+      for (i = 0; i < lets.length; i++) sl += '<span class="slot" id="slot' + i + '"></span>';
+      q.id = 'sp' + w[0]; q.type = 'spell'; q.word = w[0]; q.pos = 0; q.tiles = tiles;
+      q.say = 'Spell ' + w[0] + '.'; q.instr = 'Tap the letters to spell it';
+      q.prompt = '<div class="pbig" style="font-size:110px">' + w[1] + '</div><div class="slots">' + sl + '</div>';
+      q.choices = [];
+      for (i = 0; i < tiles.length; i++) q.choices.push({ h: tiles[i], ok: false, cls: 'txt' });
+    }
+    return q;
+  }
+
+  /* ---- PATTERNS ---- */
+  var PSH = ['circle', 'square', 'triangle', 'star', 'heart'];
+  var PCN = { red: '#E53935', blue: '#1E88E5', yellow: '#FDD835', green: '#43A047', purple: '#8E24AA', orange: '#FB8C00' };
+  var PCK = ['red', 'blue', 'yellow', 'green', 'purple', 'orange'];
+  function starPts100() { var s = ''; for (var i = 0; i < 10; i++) { var a = -Math.PI / 2 + i * Math.PI / 5, r = i % 2 ? 20 : 46; s += (50 + Math.cos(a) * r).toFixed(1) + ',' + (54 + Math.sin(a) * r).toFixed(1) + ' '; } return s; }
+  var STAR100 = starPts100();
+  function shapeSVG(shape, col, sz) {
+    var inner;
+    if (shape === 'circle') inner = '<circle cx="50" cy="50" r="42"/>';
+    else if (shape === 'square') inner = '<rect x="10" y="10" width="80" height="80" rx="8"/>';
+    else if (shape === 'triangle') inner = '<polygon points="50,8 93,88 7,88"/>';
+    else if (shape === 'star') inner = '<polygon points="' + STAR100 + '"/>';
+    else inner = '<path d="M50 90C20 66 3 49 12 28 22 7 47 12 50 31 53 12 78 7 88 28 97 49 80 66 50 90Z"/>';
+    return '<svg width="' + sz + '" height="' + sz + '" viewBox="0 0 100 100"><g fill="' + col + '" stroke="rgba(0,0,0,.18)" stroke-width="4" stroke-linejoin="round">' + inner + '</g></svg>';
+  }
+  function toks(n, mode) {
+    var out = [], used = {}, us = {}, uc = {}, shp = pick(PSH), g = 0;
+    while (out.length < n && g++ < 300) {
+      var s = mode === 'shape' ? shp : pick(PSH), c = pick(PCK), k = s + c;
+      if (used[k]) continue;
+      if (mode === 'shape' && uc[c]) continue;
+      if (mode === 'diff' && (us[s] || uc[c])) continue;
+      used[k] = us[s] = uc[c] = 1; out.push({ s: s, c: c, k: k });
+    }
+    return out;
+  }
+  function patternQ(lv) {
+    var units, unit, len = 9, i;
+    if (lv === 1) { units = toks(3, 'shape'); unit = [0, 1]; len = 6; }
+    else if (lv === 2) { units = toks(3, 'diff'); unit = [0, 1]; len = 6; }
+    else if (lv === 3) { units = toks(3, 'diff'); unit = pick([[0, 0, 1], [0, 1, 1]]); }
+    else if (lv === 4) { units = toks(4, 'diff'); unit = [0, 1, 2]; }
+    else { units = toks(4); unit = pick([[0, 1], [0, 0, 1], [0, 1, 1], [0, 1, 2], [0, 0, 1, 1]]); }
+    var seq = [];
+    for (i = 0; i < len; i++) seq.push(unit[i % unit.length]);
+    var blank = lv === 5 ? ri(2, len - 2) : len - 1, ans = units[seq[blank]];
+    var W = window.innerWidth || 1024, sz = Math.max(46, Math.min(90, Math.floor((W - 60) / len) - 12)), h = '<div class="pseq">';
+    for (i = 0; i < len; i++) {
+      if (i === blank) h += '<span class="pq" style="width:' + sz + 'px;height:' + sz + 'px;line-height:' + (sz - 10) + 'px;font-size:' + Math.round(sz * 0.6) + 'px">?</span>';
+      else h += '<span class="ptok">' + shapeSVG(units[seq[i]].s, PCN[units[seq[i]].c], sz) + '</span>';
+    }
+    h += '</div>';
+    var q = { id: 't' + lv + ans.k + blank, prompt: h };
+    q.say = blank === len - 1 ? 'What comes next?' : 'What is missing?'; q.instr = q.say;
+    q.choices = mk(units, ans, 'pat', function (u) { return shapeSVG(u.s, PCN[u.c], 104); });
+    return q;
+  }
+
+  /* ---- PUZZLES ---- */
+  function puzzleQ(lv) {
+    var q = {}, i, a, b, items, t, p, s;
+    if (lv === 1) {
+      t = pick(CATS.animal.concat(CATS.fruit)); var big = Math.random() < 0.5, cs = shuffle([44, 84, 132]);
+      q.id = 'z' + t + big; q.say = 'Which one is the ' + (big ? 'biggest' : 'smallest') + '?'; q.instr = q.say;
+      q.prompt = '<div class="psent">' + (big ? 'biggest' : 'smallest') + '</div>';
+      q.choices = [];
+      for (i = 0; i < cs.length; i++) q.choices.push({ h: '<span style="font-size:' + cs[i] + 'px;line-height:1">' + t + '</span>', ok: cs[i] === (big ? 132 : 44), cls: 'sz' });
+    } else if (lv === 2) {
+      var keys = ['fruit', 'animal', 'vehicle', 'clothes', 'weather'];
+      a = pick(keys); b = pick(sample(keys, 4, [a]));
+      var odd = pick(CATS[b]); items = sample(CATS[a], 3).concat([odd]);
+      q.id = 'o' + odd; q.say = 'Which one does not belong?'; q.instr = q.say;
+      q.prompt = '<div class="pbig">🤔</div>'; q.choices = mk(items, odd, 'pic');
+    } else if (lv === 3) {
+      items = sample(CATS[pick(['animal', 'vehicle', 'fruit'])], 3); t = items[0];
+      q.id = 'h' + t; q.say = 'Which shadow matches?'; q.instr = q.say;
+      q.prompt = '<div class="pbig">' + t + '</div>';
+      q.choices = mk(items, t, 'pic', function (x) { return '<span class="shadow">' + x + '</span>'; });
+    } else if (lv === 4) {
+      p = pick(PAIRS); var others = sample(PAIRS, 2, [p]);
+      q.id = 'g' + p[0]; q.say = 'What goes with this?'; q.instr = q.say;
+      q.prompt = '<div class="pbig">' + p[0] + '</div>';
+      q.choices = mk([p[1], others[0][1], others[1][1]], p[1], 'pic');
+    } else {
+      s = pick(SEQS); var pool = [], j;
+      for (i = 0; i < SEQS.length; i++) if (SEQS[i] !== s) for (j = 0; j < SEQS[i].length; j++) if (s.indexOf(SEQS[i][j]) < 0 && pool.indexOf(SEQS[i][j]) < 0) pool.push(SEQS[i][j]);
+      t = s[s.length - 1];
+      var shown = '<div class="pseq">';
+      for (i = 0; i < s.length - 1; i++) shown += '<span class="pbig" style="font-size:96px">' + s[i] + '</span><span class="arr">&rarr;</span>';
+      shown += '<span class="pq" style="width:104px;height:104px;line-height:94px;font-size:60px">?</span></div>';
+      q.id = 'q' + t; q.say = 'What comes next?'; q.instr = q.say; q.prompt = shown;
+      q.choices = mk([t].concat(sample(pool, 2)), t, 'pic');
+    }
+    return q;
+  }
+
+  var SK = {
+    letters: { name: 'Letters', icon: '🔤', color: '#FF6B6B', gen: letterQ,
+      levels: ['Find capital letters', 'Find small letters', 'Match capital to small', 'Beginning sounds', 'First letter of a word', 'Missing middle letter'] },
+    numbers: { name: 'Numbers', icon: '🔢', color: '#4B7BEC', gen: numberQ,
+      levels: ['Find numbers 1–10', 'Count up to 10', 'More or fewer', 'Find numbers 11–20', 'Before and after', 'Adding up to 10', 'Taking away'] },
+    words: { name: 'Words', icon: '📖', color: '#20BF6B', gen: wordsQ,
+      levels: ['Rhyming words', 'Sight words', 'Read a word', 'Spell a word', 'Read a sentence'] },
+    patterns: { name: 'Patterns', icon: '🔷', color: '#A55EEA', gen: patternQ,
+      levels: ['Colour patterns (AB)', 'Shape patterns (AB)', 'AAB and ABB patterns', 'ABC patterns', 'Fill the gap'] },
+    puzzles: { name: 'Puzzles', icon: '🧩', color: '#FF9F43', gen: puzzleQ,
+      levels: ['Biggest and smallest', 'Odd one out', 'Shadow match', 'What goes together', 'What comes next'] }
+  };
+  var SKO = ['letters', 'numbers', 'words', 'patterns', 'puzzles'];
+  var curSk = null, Q = null, lastId = '', qTimer = 0;
+
+  function renderSubjects() {
+    var h = '';
+    for (var i = 0; i < SKO.length; i++) {
+      var id = SKO[i], g = SK[id], s = sk(id);
+      h += '<button class="subj flex center" data-sk="' + id + '" style="background:' + g.color + '"><span class="st">⭐ ' + s.stars + '</span><span class="ic">' + g.icon + '</span><span class="nm">' + g.name + '</span><span class="lv">Level ' + s.lvl + ' of ' + g.levels.length + '</span></button>';
+    }
+    $('subjects').innerHTML = h;
+    each(qa('.subj'), function (b) { tap(b, function () { sfx.blip(); curSk = b.getAttribute('data-sk'); lastId = ''; show('quiz'); }); });
+  }
+  enter.games = renderSubjects;
+  enter.quiz = function () { nextQ(); };
+  leave.quiz = function () { clearTimeout(qTimer); Q = null; };
+
+  function topBar() {
+    var s = sk(curSk), g = SK[curSk], d = '';
+    for (var i = 0; i < 4; i++) d += '<i' + (i < s.streak ? ' class="on"' : '') + '></i>';
+    $('qSubj').innerHTML = g.icon + ' ' + g.name;
+    $('qLvl').innerHTML = 'Level ' + s.lvl;
+    $('qDots').innerHTML = d;
+    $('qStars').innerHTML = '⭐ ' + s.stars;
+  }
+  function nextQ() {
+    clearTimeout(qTimer);
+    if (current !== 'quiz' || !curSk) return;
+    var s = sk(curSk), q, g = 0;
+    do { q = SK[curSk].gen(s.lvl); } while (q.id === lastId && g++ < 8);
+    lastId = q.id; q.misses = 0; q.locked = false; Q = q;
+    topBar();
+    $('qPrompt').innerHTML = q.prompt + '<div class="qinstr"><button class="qsay flex center" id="qSayBtn">🔊</button><span>' + q.instr + '</span></div>';
+    tap($('qSayBtn'), function () { if (Q) say(Q.say); });
+    var h = '';
+    for (var i = 0; i < q.choices.length; i++) h += '<button class="qc ' + (q.choices[i].cls || '') + '" data-i="' + i + '">' + q.choices[i].h + '</button>';
+    $('qChoices').innerHTML = h;
+    each(qa('.qc', $('qChoices')), function (b) { tap(b, function () { answer(+b.getAttribute('data-i'), b); }); });
+    qTimer = setTimeout(function () { if (Q) say(Q.say); }, 250);
+  }
+  function shakeEl(el) { el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); }
+  function oops() { tone(220, 0.2, { type: 'triangle', vol: 0.16, to: 160 }); }
+  function hintAt(i) {
+    var bs = qa('.qc', $('qChoices'));
+    for (var k = 0; k < bs.length; k++) bs[k].classList.toggle('hint', k === i);
+  }
+  function answer(i, btn) {
+    if (!Q || Q.locked) return;
+    if (Q.type === 'spell') { spellTap(i, btn); return; }
+    if (btn.classList.contains('wrong')) return;
+    if (Q.choices[i].ok) {
+      Q.locked = true; btn.classList.remove('hint'); btn.classList.add('right'); sfx.chime(); finish(Q.misses === 0);
+    } else {
+      Q.misses++; btn.classList.add('wrong'); shakeEl(btn); oops();
+      if (Q.misses >= 2) {
+        for (var k = 0; k < Q.choices.length; k++) if (Q.choices[k].ok) hintAt(k);
+        say('This one!');
+      } else say('Try again!');
+    }
+  }
+  function spellTap(i, btn) {
+    if (btn.classList.contains('used')) return;
+    var need = Q.word.charAt(Q.pos);
+    if (Q.tiles[i] === need) {
+      btn.classList.add('used'); btn.classList.remove('hint');
+      var sl = $('slot' + Q.pos); sl.innerHTML = need;
+      tone(520 + Q.pos * 130, 0.15, { type: 'triangle', vol: 0.2 });
+      Q.pos++;
+      if (Q.pos === Q.word.length) { Q.locked = true; sfx.chime(); finish(Q.misses === 0); }
+    } else {
+      Q.misses++; shakeEl(btn); oops();
+      if (Q.misses >= 2) {
+        var bs = qa('.qc', $('qChoices'));
+        for (var k = 0; k < Q.tiles.length; k++) if (Q.tiles[k] === need && !bs[k].classList.contains('used')) { hintAt(k); break; }
+      }
+      say('Try again. ' + Q.word + '.');
+    }
+  }
+  function finish(first) {
+    var s = sk(curSk), max = SK[curSk].levels.length, up = false, k, miss = 0;
+    s.tries++;
+    if (first) { s.right++; s.stars++; s.streak++; s.recent.push(1); } else { s.streak = 0; s.recent.push(0); }
+    if (s.recent.length > 6) s.recent.shift();
+    if (s.streak >= 4) { s.streak = 0; s.recent = []; if (s.lvl < max) { s.lvl++; up = true; } }
+    for (k = 0; k < s.recent.length; k++) if (!s.recent[k]) miss++;
+    if (miss >= 3 && s.lvl > 1) { s.lvl--; s.recent = []; s.streak = 0; }
+    saveP(); topBar();
+    if (up) {
+      qTimer = setTimeout(function () { sfx.win(); confetti(); toast('⭐ Level ' + s.lvl + '!', 1800); say('Level up! ' + praise()); qTimer = setTimeout(nextQ, 2300); }, 350);
+    } else {
+      say(first ? praise() : 'That’s it!');
+      qTimer = setTimeout(nextQ, 1300);
+    }
+  }
+
+  /* ================= WRITE (tracing) ================= */
+  var TFONT = '"Arial Rounded MT Bold", "Avenir Next", "Helvetica Neue", Arial, sans-serif';
+  var TSH = { line: 'a line down', line2: 'a line across', circle: 'a circle', cross: 'a cross', square: 'a square', triangle: 'a triangle', zigzag: 'a zigzag' };
+  var TSETS = [['shapes', '⭕ Shapes'], ['upper', 'ABC'], ['lower', 'abc'], ['nums', '123'], ['name', '😀 Name']];
+  var TINK = ['#E53935', '#FB8C00', '#43A047', '#1E88E5', '#8E24AA', '#EC407A', '#00ACC1'];
+  function tItems(id) {
+    if (id === 'shapes') return ['line', 'line2', 'circle', 'cross', 'square', 'triangle', 'zigzag'];
+    if (id === 'upper') return AZ;
+    if (id === 'lower') return AZ.map(function (l) { return l.toLowerCase(); });
+    if (id === 'nums') return '0123456789'.split('');
+    var n = (P.name || '').replace(/^\s+|\s+$/g, '');
+    return n ? [n.charAt(0).toUpperCase() + n.slice(1)] : ['Mom', 'Dad', 'Cat', 'Dog', 'Sun'];
+  }
+  var tset = 'shapes', tidx = 0, tPassed = false, tItem = '', tColor = '#E53935', tBrush = 20, tW = 0, tH = 0, tStrokes = {}, tTimer = 0;
+  var tst = $('tstage'), tg = $('tguide'), tk = $('tink'), tgc = tg.getContext('2d'), tkc = tk.getContext('2d');
+  var tfat = document.createElement('canvas'), tfc = tfat.getContext('2d');
+  function tSize() {
+    var w = tst.clientWidth, h = tst.clientHeight;
+    if (!w || !h) return false;
+    tW = w; tH = h;
+    each([tg, tk, tfat], function (c) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); c.style.width = w + 'px'; c.style.height = h + 'px'; });
+    return true;
+  }
+  function tShapePath(c, name, cx, cy, S) {
+    var h = S / 2, a;
+    c.beginPath();
+    if (name === 'line') { c.moveTo(cx, cy - h); c.lineTo(cx, cy + h); return [cx, cy - h]; }
+    if (name === 'line2') { c.moveTo(cx - h, cy); c.lineTo(cx + h, cy); return [cx - h, cy]; }
+    if (name === 'circle') { a = S * 0.42; c.arc(cx, cy, a, -Math.PI / 2, Math.PI * 1.5 - 0.001, false); return [cx, cy - a]; }
+    if (name === 'cross') { a = h * 0.9; c.moveTo(cx, cy - a); c.lineTo(cx, cy + a); c.moveTo(cx - a, cy); c.lineTo(cx + a, cy); return [cx, cy - a]; }
+    if (name === 'square') { a = S * 0.4; c.moveTo(cx - a, cy - a); c.lineTo(cx + a, cy - a); c.lineTo(cx + a, cy + a); c.lineTo(cx - a, cy + a); c.closePath(); return [cx - a, cy - a]; }
+    if (name === 'triangle') { c.moveTo(cx, cy - S * 0.45); c.lineTo(cx + S * 0.45, cy + S * 0.4); c.lineTo(cx - S * 0.45, cy + S * 0.4); c.closePath(); return [cx, cy - S * 0.45]; }
+    c.moveTo(cx - h, cy - S * 0.2); c.lineTo(cx - h / 2, cy + S * 0.2); c.lineTo(cx, cy - S * 0.2); c.lineTo(cx + h / 2, cy + S * 0.2); c.lineTo(cx + h, cy - S * 0.2);
+    return [cx - h, cy - S * 0.2];
+  }
+  function tDraw(c, item, fat) {
+    c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, tW, tH);
+    var cx = tW / 2, cy = tH / 2;
+    c.lineCap = 'round'; c.lineJoin = 'round';
+    if (tset === 'shapes') {
+      var S = Math.min(tW, tH) * 0.72, lane = S * 0.15;
+      c.strokeStyle = '#E4DBF7'; c.lineWidth = lane + (fat ? S * 0.14 : 0);
+      var st = tShapePath(c, item, cx, cy, S); c.stroke();
+      if (!fat) {
+        c.save();
+        if (c.setLineDash) c.setLineDash([10, 14]);
+        c.strokeStyle = '#B9A8E8'; c.lineWidth = 4; tShapePath(c, item, cx, cy, S); c.stroke();
+        c.restore();
+        c.fillStyle = '#20BF6B'; c.beginPath(); c.arc(st[0], st[1], lane * 0.45, 0, Math.PI * 2); c.fill();
+      }
+      tBrush = lane * 0.8;
+    } else {
+      var fs = item.length > 1 ? tH * 0.55 : Math.min(tH * 0.86, tW * 0.75);
+      c.font = '700 ' + fs + 'px ' + TFONT;
+      if (item.length > 1) { var mw = c.measureText(item).width; if (mw > tW * 0.9) { fs = fs * tW * 0.9 / mw; c.font = '700 ' + fs + 'px ' + TFONT; } }
+      c.textAlign = 'center'; c.textBaseline = 'middle';
+      var y = cy + fs * 0.04;
+      c.fillStyle = '#E4DBF7';
+      if (fat) { c.strokeStyle = '#E4DBF7'; c.lineWidth = fs * 0.14; c.strokeText(item, cx, y); }
+      c.fillText(item, cx, y);
+      if (!fat) { c.lineWidth = 2; c.strokeStyle = '#C9BBEE'; c.strokeText(item, cx, y); }
+      tBrush = fs * 0.12;
+    }
+  }
+  function tSayText() {
+    if (tset === 'shapes') return 'Trace ' + TSH[tItem] + '. Start at the green dot.';
+    if (tset === 'upper') return 'Trace the letter ' + letterName(tItem) + '.';
+    if (tset === 'lower') return 'Trace the small letter ' + letterName(tItem.toUpperCase()) + '.';
+    if (tset === 'nums') return 'Trace the number ' + tItem + '.';
+    return P.name ? 'Trace your name. ' + tItem + '.' : 'Trace the word ' + tItem + '.';
+  }
+  function tDone() { return (P.trace[tset] = P.trace[tset] || {}); }
+  function tCountText() {
+    var items = tItems(tset), d = tDone(), n = 0;
+    for (var i = 0; i < items.length; i++) if (d[items[i]]) n++;
+    $('tCount').innerHTML = '⭐ ' + n + ' / ' + items.length + (d[tItem] ? ' ✓' : '');
+  }
+  function tLoad(silent) {
+    clearTimeout(tTimer);
+    if (!tW && !tSize()) return;
+    var items = tItems(tset);
+    if (tidx >= items.length || tidx < 0) tidx = 0;
+    tItem = items[tidx]; tPassed = false; tStrokes = {};
+    tColor = TINK[(tidx + tset.length) % TINK.length];
+    tkc.setTransform(1, 0, 0, 1, 0, 0); tkc.clearRect(0, 0, tk.width, tk.height);
+    tDraw(tgc, tItem, false); tDraw(tfc, tItem, true);
+    tCountText();
+    each(qa('[data-ts]'), function (b) { b.classList.toggle('sel', b.getAttribute('data-ts') === tset); });
+    if (!silent) say(tSayText());
+  }
+  function tGo(d) { var n = tItems(tset).length; tidx = (tidx + d + n) % n; sfx.blip(); tLoad(); }
+  function tFirstUndone(id) {
+    var items = tItems(id), d = P.trace[id] || {};
+    for (var i = 0; i < items.length; i++) if (!d[items[i]]) return i;
+    return 0;
+  }
+  (function () {
+    var h = '';
+    for (var i = 0; i < TSETS.length; i++) h += '<button class="tpill" data-ts="' + TSETS[i][0] + '">' + TSETS[i][1] + '</button>';
+    $('tsets').innerHTML = h;
+    each(qa('[data-ts]'), function (b) { tap(b, function () { tset = b.getAttribute('data-ts'); tidx = tFirstUndone(tset); sfx.blip(); tLoad(); }); });
+    tap($('tPrev'), function () { tGo(-1); });
+    tap($('tNext'), function () { tGo(1); });
+    tap($('tClear'), function () { sfx.pop(); tLoad(true); });
+    tap($('tHear'), function () { say(tSayText()); });
+    tap($('tCheck'), function () { tCheck(true); });
+  })();
+  enter.trace = function () { tSize(); tLoad(); };
+  leave.trace = function () { clearTimeout(tTimer); };
+  window.addEventListener('resize', function () { if (current === 'trace') setTimeout(function () { tSize(); tLoad(true); }, 80); }, false);
+
+  function tpt(t) { var r = tst.getBoundingClientRect(); return { x: t.clientX - r.left, y: t.clientY - r.top }; }
+  function tSeg(a, b) {
+    tkc.setTransform(dpr, 0, 0, dpr, 0, 0);
+    tkc.strokeStyle = tColor; tkc.lineWidth = tBrush; tkc.lineCap = 'round'; tkc.lineJoin = 'round';
+    tkc.beginPath(); tkc.moveTo(a.x, a.y); tkc.lineTo(b.x + 0.01, b.y + 0.01); tkc.stroke();
+  }
+  function tAny() { for (var k in tStrokes) if (tStrokes.hasOwnProperty(k)) return true; return false; }
+  function tStart(id, p) { if (tPassed) return; tStrokes[id] = p; tSeg(p, p); }
+  function tMove(id, p) { var s = tStrokes[id]; if (!s) return; tSeg(s, p); tStrokes[id] = p; }
+  function tEnd(id) { if (!tStrokes[id]) return; delete tStrokes[id]; if (!tAny()) tCheck(false); }
+  tst.addEventListener('touchstart', function (e) { e.preventDefault(); for (var i = 0; i < e.changedTouches.length; i++) tStart(e.changedTouches[i].identifier, tpt(e.changedTouches[i])); }, false);
+  tst.addEventListener('touchmove', function (e) { e.preventDefault(); for (var i = 0; i < e.changedTouches.length; i++) tMove(e.changedTouches[i].identifier, tpt(e.changedTouches[i])); }, false);
+  tst.addEventListener('touchend', function (e) { for (var i = 0; i < e.changedTouches.length; i++) tEnd(e.changedTouches[i].identifier); }, false);
+  tst.addEventListener('touchcancel', function (e) { for (var i = 0; i < e.changedTouches.length; i++) tEnd(e.changedTouches[i].identifier); }, false);
+  var tMouse = false;
+  tst.addEventListener('mousedown', function (e) { tMouse = true; tStart('m', tpt(e)); }, false);
+  window.addEventListener('mousemove', function (e) { if (tMouse) tMove('m', tpt(e)); }, false);
+  window.addEventListener('mouseup', function () { if (tMouse) { tMouse = false; tEnd('m'); } }, false);
+
+  // compares the ink with the letter at a small size, so it is quick on an older iPad
+  var tSmall = [document.createElement('canvas'), document.createElement('canvas'), document.createElement('canvas')];
+  function tScore() {
+    var w = Math.max(1, Math.round(tW / 3)), h = Math.max(1, Math.round(tH / 3)), data = [], i;
+    var srcs = [tg, tk, tfat];
+    for (i = 0; i < 3; i++) {
+      var c = tSmall[i]; c.width = w; c.height = h;
+      var x = c.getContext('2d'); x.clearRect(0, 0, w, h); x.drawImage(srcs[i], 0, 0, w, h);
+      try { data.push(x.getImageData(0, 0, w, h).data); } catch (e) { return { cov: 0, out: 1 }; }
+    }
+    var G = 0, C = 0, I = 0, O = 0;
+    for (i = 3; i < data[0].length; i += 4) {
+      var g = data[0][i] > 90, k = data[1][i] > 90, f = data[2][i] > 40;
+      if (g) { G++; if (k) C++; }
+      if (k) { I++; if (!f) O++; }
+    }
+    return { cov: G ? C / G : 0, out: I ? O / I : 0, ink: I };
+  }
+  function tCheck(manual) {
+    if (tPassed) return;
+    var r = tScore();
+    if (r.cov >= (tset === 'shapes' ? 0.6 : 0.5) && r.out <= 0.3) {
+      tPassed = true; tDone()[tItem] = 1; saveP(); tCountText();
+      sfx.win(); say(praise());
+      tTimer = setTimeout(function () { if (current === 'trace' && tPassed) tGo(1); }, 1900);
+    } else if (manual) {
+      oops();
+      say(!r.ink ? 'Use your finger to trace the line.' : r.out > 0.3 ? 'Try to stay on the lines. Tap the arrows to start again.' : 'Keep going! Trace the whole thing.');
+    }
+  }
+
+  /* ================= GROWN-UPS (press and hold the lock) ================= */
+  function openGrown() {
+    var body = $('grownBody'), keep = body.scrollTop, i, h;
+    h = '<h2>For grown-ups</h2>';
+    h += '<div class="grow"><span class="gi">😀</span><div class="gn"><b>Child’s first name</b><span>Used for praise and in Write › Name</span></div><input id="gName" maxlength="12" autocomplete="off" autocorrect="off" autocapitalize="words" spellcheck="false" value="' + escH(P.name) + '"></div>';
+    for (i = 0; i < SKO.length; i++) {
+      var id = SKO[i], g = SK[id], s = sk(id);
+      var acc = s.tries ? Math.round(s.right / s.tries * 100) + '% right first try (' + s.right + ' of ' + s.tries + ')' : 'Not played yet';
+      h += '<div class="grow"><span class="gi">' + g.icon + '</span><div class="gn"><b>' + g.name + ' — Level ' + s.lvl + ' of ' + g.levels.length + '</b><span>' + g.levels[s.lvl - 1] + ' · ' + acc + '</span></div>';
+      h += '<button class="gbtn" data-sk="' + id + '" data-d="-1">−</button><button class="gbtn" data-sk="' + id + '" data-d="1">+</button></div>';
+    }
+    var tl = [];
+    for (i = 0; i < TSETS.length - 1; i++) {
+      var its = tItems(TSETS[i][0]), d = P.trace[TSETS[i][0]] || {}, n = 0;
+      for (var j = 0; j < its.length; j++) if (d[its[j]]) n++;
+      tl.push(TSETS[i][1].replace(/^\S+ /, '') + ' ' + n + '/' + its.length);
+    }
+    h += '<div class="grow"><span class="gi">✏️</span><div class="gn"><b>Write</b><span>' + tl.join(' · ') + '</span></div></div>';
+    h += '<div class="gnote">Each subject goes up a level after 4 right answers in a row, and steps back down if a level is too hard. Use − and + to choose a level yourself. Progress is saved on this iPad.</div>';
+    h += '<div style="text-align:center;margin-top:14px"><button class="bigbtn no" id="gReset">Reset</button><button class="bigbtn blue" id="gDone">Done</button></div>';
+    body.innerHTML = h;
+    $('grownOv').classList.add('on');
+    body.scrollTop = keep;
+    $('gName').addEventListener('input', function () { P.name = this.value.replace(/[^A-Za-zÀ-ÿ' -]/g, '').slice(0, 12); saveP(); }, false);
+    each(qa('.gbtn', body), function (b) {
+      tap(b, function () {
+        var id = b.getAttribute('data-sk'), s = sk(id), m = SK[id].levels.length;
+        s.lvl = Math.max(1, Math.min(m, s.lvl + (+b.getAttribute('data-d')))); s.streak = 0; s.recent = [];
+        saveP(); sfx.blip(); openGrown();
+      });
+    });
+    tap($('gReset'), function () { ask('Reset all levels, stars and tracing?', function () { var nmv = P.name; P = { skills: {}, trace: {}, name: nmv }; saveP(); openGrown(); }); });
+    tap($('gDone'), function () {
+      var a = document.activeElement; if (a && a.blur) a.blur();
+      $('grownOv').classList.remove('on');
+      if (current === 'games') renderSubjects();
+      if (current === 'trace') tLoad(true);
+    });
+  }
+  (function () {
+    var b = $('lockBtn'), t = 0, t0 = 0;
+    function start(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      t0 = Date.now(); b.classList.add('holding');
+      t = setTimeout(function () { t = 0; b.classList.remove('holding'); sfx.chime(); openGrown(); }, 1500);
+    }
+    function stop() {
+      if (!t) return;
+      clearTimeout(t); t = 0; b.classList.remove('holding');
+      if (Date.now() - t0 < 1400) toast('Grown-ups: press and hold 🔒', 1500);
+    }
+    b.addEventListener('touchstart', start, NOPASSIVE);
+    b.addEventListener('touchend', stop, false);
+    b.addEventListener('touchcancel', stop, false);
+    b.addEventListener('mousedown', start, false);
+    b.addEventListener('mouseup', stop, false);
+    b.addEventListener('mouseleave', stop, false);
+  })();
+
+  // test hook (harmless; lets the automated checks reach the game logic)
+  window.__play = { SK: SK, sk: sk, P: function () { return P; }, tItems: tItems, tScore: tScore, tState: function () { return { set: tset, idx: tidx, item: tItem, passed: tPassed, W: tW, H: tH }; },
+    tShapePath: tShapePath, openGrown: openGrown, Q: function () { return Q; } };
 
   // first paint of draw canvas so it is ready
   setTool('brush');

@@ -3,7 +3,8 @@ OUR IPAD APPS — SETUP
 
 What's in this folder
   index.html          Start page with links to both apps
-  play.html           Play Time (drawing, colouring, flashcards, animal sounds, bubbles, memory, xylophone)
+  play.html           Play Time: Brain Games (5 subjects, 28 levels), Write (tracing), flashcards,
+                      drawing, colouring, memory, animal sounds, bubbles, xylophone
   calendar.html       Family Calendar
   *-icon.png          Home-screen icons
   *.appcache          Lets the apps work offline after the first visit
@@ -33,5 +34,15 @@ TIPS
   - Calendar: tap a day once to see its events, tap it again to open that day.
     Swipe left/right to move between months, weeks or days.
   - Back up the calendar now and then: Calendars > Back Up Calendar > Email the backup to myself.
-  - Updating the apps later: upload the new files AND the new .appcache files together,
-    then close and reopen the app twice on the iPad.
+  - Brain Games level up by themselves after 4 right answers in a row, and step back
+    down if a level is too hard. Press and hold the lock on the Play Time home screen
+    to see progress, set levels yourself, and enter your child's name.
+
+UPDATING THE APPS LATER (your calendar events and Play Time progress are kept)
+  a. On github.com/YOUR-USERNAME/ipad, click "Add file" > "Upload files".
+  b. Drag in all the new files (same names) and click Commit changes.
+     They replace the old ones. Keep the same repository name, or the address changes.
+  c. Wait a minute or two. On the iPad, open each app from its Home Screen icon,
+     wait a few seconds, close it, and open it again. The new version appears.
+  Tip: back up the calendar first (Calendars > Back Up Calendar) just to be safe.
+  Don't delete the Home Screen icons; on some iPads that also deletes their saved data.
