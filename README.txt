@@ -3,8 +3,9 @@ OUR IPAD APPS — SETUP
 
 What's in this folder
   index.html          Start page with links to both apps
-  play.html           Play Time: Brain Games (5 subjects, 28 levels), Write (tracing), flashcards,
-                      drawing, colouring, memory, animal sounds, bubbles, xylophone
+  play.html           Play Time: Rory's Hero Academy (9 missions), Brain Games (28 levels), Write,
+                      Flashcards, Dot to Dot, I Spy, Draw, Colouring, Silly Faces, Jigsaw, Maze,
+                      Feed & Sort, Memory, Animal sounds, Bubbles, Music
   calendar.html       Family Calendar
   *-icon.png          Home-screen icons
   *.appcache          Lets the apps work offline after the first visit
@@ -34,6 +35,8 @@ TIPS
   - Calendar: tap a day once to see its events, tap it again to open that day.
     Swipe left/right to move between months, weeks or days.
   - Back up the calendar now and then: Calendars > Back Up Calendar > Email the backup to myself.
+  - Rory's Hero Academy: finish missions to earn stars, badges, new capes, hats and worlds.
+    The music button (note icon) in the Academy turns the background music on and off.
   - Brain Games level up by themselves after 4 right answers in a row, and step back
     down if a level is too hard. Press and hold the lock on the Play Time home screen
     to see progress, set levels yourself, and enter your child's name.
