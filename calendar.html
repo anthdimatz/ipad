@@ -151,6 +151,7 @@ textarea{display:block;width:100%;height:90px;padding:12px 16px;resize:none;back
 .crow{padding:10px 14px;border-bottom:1px solid #EDEDF0}
 .crow:last-child{border-bottom:0}
 .eye{width:30px;height:30px;border-radius:15px;border:2px solid;color:#fff;font-size:16px;font-weight:700;line-height:26px;text-align:center;-webkit-flex-shrink:0;flex-shrink:0}
+.langrow{-webkit-flex-wrap:wrap;flex-wrap:wrap}.langrow .seg2{-webkit-flex-wrap:wrap;flex-wrap:wrap}.langrow .seg2 button{margin:2px}
 .cname{-webkit-flex:1;flex:1;min-width:0;height:38px;margin:0 10px;font-size:17px;font-weight:600;background:#F7F7F9;border-radius:8px;padding:0 10px}
 .cdel{color:#E5484D;font-size:15px;padding:0 6px;height:38px}
 .dots{margin:10px 0 2px 40px;-webkit-flex-wrap:wrap;flex-wrap:wrap}
@@ -180,17 +181,17 @@ textarea{display:block;width:100%;height:90px;padding:12px 16px;resize:none;back
 <body>
 <div id="top">
   <div class="r1 flex">
-    <button class="btn" data-act="today">Today</button>
+    <button class="btn" data-act="today" data-t="Today">Today</button>
     <button class="ibtn" data-act="prev">&#x2039;</button>
     <button class="ibtn" data-act="next">&#x203A;</button>
     <div class="seg flex" id="seg">
-      <button data-act="view" data-v="day">Day</button>
-      <button data-act="view" data-v="week">Week</button>
-      <button data-act="view" data-v="month">Month</button>
-      <button data-act="view" data-v="list">List</button>
+      <button data-act="view" data-v="day" data-t="Day">Day</button>
+      <button data-act="view" data-v="week" data-t="Week">Week</button>
+      <button data-act="view" data-v="month" data-t="Month">Month</button>
+      <button data-act="view" data-v="list" data-t="List">List</button>
     </div>
     <div class="grow"></div>
-    <button class="btn" data-act="cals">Calendars</button>
+    <button class="btn" data-act="cals" data-t="Calendars">Calendars</button>
     <button class="addbtn" data-act="add">+</button>
   </div>
   <div class="r2 flex"><div id="ttl"></div></div>
@@ -250,11 +251,175 @@ textarea{display:block;width:100%;height:90px;padding:12px 16px;resize:none;back
     return defaults();
   }
   var db = load();
+
+  /* ================= language ================= */
+  var LANGS = [['en', 'English'], ['fr', 'Français'], ['es', 'Español'], ['it', 'Italiano'], ['pt', 'Português']];
+  var CAL_D = {
+    en: [DAYS, DSH, MON, MSH],
+    fr: [['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'], ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.'],
+      ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'],
+      ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.']],
+    es: [['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'], ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'],
+      ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'],
+      ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sept', 'oct', 'nov', 'dic']],
+    it: [['domenica', 'lunedì', 'martedì', 'mercoledì', 'giovedì', 'venerdì', 'sabato'], ['dom', 'lun', 'mar', 'mer', 'gio', 'ven', 'sab'],
+      ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'],
+      ['gen', 'feb', 'mar', 'apr', 'mag', 'giu', 'lug', 'ago', 'set', 'ott', 'nov', 'dic']],
+    pt: [['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'], ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'],
+      ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'],
+      ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']]
+  };
+  // one-letter day buttons in the repeat picker
+  var DAY1 = { en: ['S', 'M', 'Tu', 'W', 'Th', 'F', 'S'], fr: ['D', 'L', 'Ma', 'Me', 'J', 'V', 'S'], es: ['D', 'L', 'Ma', 'Mi', 'J', 'V', 'S'], it: ['D', 'L', 'Ma', 'Me', 'G', 'V', 'S'], pt: ['D', 'S', 'T', 'Qa', 'Qi', 'Sx', 'Sá'] };
+  /*@@CALTR@@*/
+  var CTR = {
+    'Changes can’t be saved on this iPad right now. If Private Browsing is on in Safari, turn it off.': ["Les changements ne peuvent pas être enregistrés sur cet iPad pour le moment. Si la navigation privée est activée dans Safari, désactivez-la.", "Ahora mismo no se pueden guardar los cambios en este iPad. Si la navegación privada está activada en Safari, desactívala.", "Al momento non è possibile salvare le modifiche su questo iPad. Se in Safari è attiva la navigazione privata, disattivala.", "Neste momento não é possível guardar as alterações neste iPad. Se a navegação privada estiver ativa no Safari, desative-a."],
+    'Every day': ["Tous les jours", "Todos los días", "Ogni giorno", "Todos os dias"],
+    'Every weekday': ["Tous les jours de semaine", "De lunes a viernes", "Dal lunedì al venerdì", "Todos os dias úteis"],
+    'Every 2 weeks on {d}': ["Toutes les 2 semaines : {d}", "Cada 2 semanas: {d}", "Ogni 2 settimane: {d}", "De 2 em 2 semanas: {d}"],
+    'Weekly on {d}': ["Chaque semaine : {d}", "Cada semana: {d}", "Ogni settimana: {d}", "Todas as semanas: {d}"],
+    'Every 2 weeks': ["Toutes les 2 semaines", "Cada 2 semanas", "Ogni 2 settimane", "De 2 em 2 semanas"],
+    'Weekly': ["Chaque semaine", "Cada semana", "Ogni settimana", "Todas as semanas"],
+    'Every month': ["Tous les mois", "Cada mes", "Ogni mese", "Todos os meses"],
+    'Every year': ["Tous les ans", "Cada año", "Ogni anno", "Todos os anos"],
+    '{r} until {d}': ["{r} jusqu’au {d}", "{r} hasta el {d}", "{r} fino al {d}", "{r} até {d}"],
+    'All day': ["Toute la journée", "Todo el día", "Tutto il giorno", "Todo o dia"],
+    'All day (continues)': ["Toute la journée (suite)", "Todo el día (continúa)", "Tutto il giorno (continua)", "Todo o dia (continua)"],
+    'Until {t}': ["Jusqu’à {t}", "Hasta {t}", "Fino a {t}", "Até {t}"],
+    'Upcoming': ["À venir", "Próximamente", "In arrivo", "Próximos"],
+    'from {d}': ["à partir du {d}", "desde el {d}", "dal {d}", "a partir de {d}"],
+    '+{n} more': ["+{n} autres", "+{n} más", "+{n} altri", "+{n} mais"],
+    'Today': ["Aujourd’hui", "Hoy", "Oggi", "Hoje"],
+    'Add Event': ["Ajouter un événement", "Añadir evento", "Aggiungi evento", "Adicionar evento"],
+    'Nothing planned': ["Rien de prévu", "Nada planeado", "Niente in programma", "Nada planeado"],
+    'all-day': ["journée", "todo el día", "tutto il giorno", "todo o dia"],
+    'Nothing planned in the next {n} days.': ["Rien de prévu dans les {n} prochains jours.", "Nada planeado en los próximos {n} días.", "Niente in programma nei prossimi {n} giorni.", "Nada planeado nos próximos {n} dias."],
+    'Tap + to add an event.': ["Touchez + pour ajouter un événement.", "Toca + para añadir un evento.", "Tocca + per aggiungere un evento.", "Toque em + para adicionar um evento."],
+    'Show more': ["Afficher plus", "Mostrar más", "Mostra altro", "Mostrar mais"],
+    'Cancel': ["Annuler", "Cancelar", "Annulla", "Cancelar"],
+    'Edit Event': ["Modifier l’événement", "Editar evento", "Modifica evento", "Editar evento"],
+    'New Event': ["Nouvel événement", "Nuevo evento", "Nuovo evento", "Novo evento"],
+    'Done': ["OK", "OK", "Fine", "OK"],
+    'Add': ["Ajouter", "Añadir", "Aggiungi", "Adicionar"],
+    'Title': ["Titre", "Título", "Titolo", "Título"],
+    'Location': ["Lieu", "Ubicación", "Luogo", "Local"],
+    'All-day': ["Toute la journée", "Todo el día", "Tutto il giorno", "Todo o dia"],
+    'Starts': ["Début", "Empieza", "Inizio", "Início"],
+    'Ends': ["Fin", "Termina", "Fine", "Fim"],
+    'Repeat': ["Répéter", "Repetir", "Ripeti", "Repetir"],
+    'End Repeat': ["Fin de la répétition", "Fin de la repetición", "Fine ripetizione", "Fim da repetição"],
+    'Never': ["Jamais", "Nunca", "Mai", "Nunca"],
+    'On Date': ["Le", "El día", "Il giorno", "Na data"],
+    'Calendar': ["Calendrier", "Calendario", "Calendario", "Calendário"],
+    'Notes': ["Notes", "Notas", "Note", "Notas"],
+    'Delete Event': ["Supprimer l’événement", "Eliminar evento", "Elimina evento", "Apagar evento"],
+    'Event added': ["Événement ajouté", "Evento añadido", "Evento aggiunto", "Evento adicionado"],
+    'Saved': ["Enregistré", "Guardado", "Salvato", "Guardado"],
+    'This is a repeating event.': ["Cet événement se répète.", "Este evento se repite.", "Questo evento si ripete.", "Este evento repete-se."],
+    'Save your changes for just this one, or for this and all future ones?': ["Enregistrer les changements pour celui-ci seulement, ou pour celui-ci et tous les suivants ?", "¿Guardar los cambios solo para este, o para este y todos los siguientes?", "Salvare le modifiche solo per questo, o per questo e tutti i successivi?", "Guardar as alterações só para este, ou para este e todos os seguintes?"],
+    'Save for This Event Only': ["Cet événement seulement", "Solo este evento", "Solo questo evento", "Só este evento"],
+    'Save for Future Events': ["Tous les événements à venir", "Todos los eventos futuros", "Tutti gli eventi futuri", "Todos os eventos futuros"],
+    'Delete “{x}”?': ["Supprimer « {x} » ?", "¿Eliminar «{x}»?", "Eliminare «{x}»?", "Apagar «{x}»?"],
+    'Deleted': ["Supprimé", "Eliminado", "Eliminato", "Apagado"],
+    'Delete just this one, or this and all future ones?': ["Supprimer celui-ci seulement, ou celui-ci et tous les suivants ?", "¿Eliminar solo este, o este y todos los siguientes?", "Eliminare solo questo, o questo e tutti i successivi?", "Apagar só este, ou este e todos os seguintes?"],
+    'Delete This Event Only': ["Supprimer cet événement seulement", "Eliminar solo este evento", "Elimina solo questo evento", "Apagar só este evento"],
+    'Delete All Future Events': ["Supprimer tous les événements à venir", "Eliminar todos los eventos futuros", "Elimina tutti gli eventi futuri", "Apagar todos os eventos futuros"],
+    'Calendars': ["Calendriers", "Calendarios", "Calendari", "Calendários"],
+    'Delete': ["Supprimer", "Eliminar", "Elimina", "Apagar"],
+    'Add Calendar': ["Ajouter un calendrier", "Añadir calendario", "Aggiungi calendario", "Adicionar calendário"],
+    'Tap the circle to show or hide a calendar. Tap a colour to change it.': ["Touchez le cercle pour afficher ou masquer un calendrier. Touchez une couleur pour la changer.", "Toca el círculo para mostrar u ocultar un calendario. Toca un color para cambiarlo.", "Tocca il cerchio per mostrare o nascondere un calendario. Tocca un colore per cambiarlo.", "Toque no círculo para mostrar ou ocultar um calendário. Toque numa cor para a mudar."],
+    'Settings': ["Réglages", "Ajustes", "Impostazioni", "Definições"],
+    'Language': ["Langue", "Idioma", "Lingua", "Idioma"],
+    'Week starts on': ["La semaine commence le", "La semana empieza el", "La settimana inizia di", "A semana começa ao"],
+    'Time': ["Heure", "Hora", "Ora", "Hora"],
+    '12-hour': ["12 h", "12 h", "12 ore", "12 h"],
+    '24-hour': ["24 h", "24 h", "24 ore", "24 h"],
+    'Backup': ["Sauvegarde", "Copia de seguridad", "Backup", "Cópia de segurança"],
+    'Everything is saved on this iPad only. Make a backup every so often so nothing is lost if Safari’s data gets cleared.': ["Tout est enregistré sur cet iPad seulement. Faites une sauvegarde de temps en temps pour ne rien perdre si les données de Safari sont effacées.", "Todo se guarda solo en este iPad. Haz una copia de vez en cuando para no perder nada si se borran los datos de Safari.", "Tutto è salvato solo su questo iPad. Fai un backup ogni tanto, così non perdi nulla se i dati di Safari vengono cancellati.", "Tudo fica guardado só neste iPad. Faça uma cópia de vez em quando para não perder nada se os dados do Safari forem apagados."],
+    'Back Up Calendar…': ["Sauvegarder le calendrier…", "Hacer copia del calendario…", "Fai il backup del calendario…", "Fazer cópia do calendário…"],
+    'Restore From a Backup…': ["Restaurer une sauvegarde…", "Restaurar una copia…", "Ripristina da un backup…", "Restaurar uma cópia…"],
+    '{n} {n:event|events} saved': ["{n} {n:événement enregistré|événements enregistrés}", "{n} {n:evento guardado|eventos guardados}", "{n} {n:evento salvato|eventi salvati}", "{n} {n:evento guardado|eventos guardados}"],
+    'New Calendar': ["Nouveau calendrier", "Nuevo calendario", "Nuovo calendario", "Novo calendário"],
+    'You need at least one calendar': ["Il faut au moins un calendrier", "Necesitas al menos un calendario", "Serve almeno un calendario", "É preciso pelo menos um calendário"],
+    'Its {n} {n:event|events} will be deleted too.': ["{n:Son|Ses} {n} {n:événement sera supprimé|événements seront supprimés} aussi.", "{n:Su|Sus} {n} {n:evento también se eliminará|eventos también se eliminarán}.", "{n:Anche il suo|Anche i suoi} {n} {n:evento verrà eliminato|eventi verranno eliminati}.", "{n:O seu|Os seus} {n} {n:evento também será apagado|eventos também serão apagados}."],
+    'Delete Calendar': ["Supprimer le calendrier", "Eliminar calendario", "Elimina calendario", "Apagar calendário"],
+    'Language changed': ["Langue modifiée", "Idioma cambiado", "Lingua cambiata", "Idioma alterado"],
+    'Family Calendar backup {d}': ["Sauvegarde du calendrier familial {d}", "Copia del calendario familiar {d}", "Backup del calendario di famiglia {d}", "Cópia do calendário da família {d}"],
+    'Email the backup to myself': ["M’envoyer la sauvegarde par courriel", "Enviarme la copia por correo", "Inviami il backup per e-mail", "Enviar-me a cópia por e-mail"],
+    'Email this to yourself, or tap in the box, Select All, and Copy it somewhere safe (like Notes or an email).': ["Envoyez-la-vous par courriel, ou touchez la zone, Tout sélectionner, puis Copier pour la garder en lieu sûr (dans Notes ou un courriel).", "Envíatela por correo, o toca el cuadro, Seleccionar todo y Copiar, y guárdala en un lugar seguro (como Notas o un correo).", "Inviatelo per e-mail, oppure tocca il riquadro, Seleziona tutto e Copia, e conservalo in un posto sicuro (come Note o un’e-mail).", "Envie-a para si por e-mail, ou toque na caixa, Selecionar tudo e Copiar, e guarde-a num sítio seguro (como as Notas ou um e-mail)."],
+    'Your calendar is too big to email in one go. Tap in the box, Select All, and Copy it somewhere safe (like Notes or an email).': ["Votre calendrier est trop gros pour un seul courriel. Touchez la zone, Tout sélectionner, puis Copier pour le garder en lieu sûr (dans Notes ou un courriel).", "Tu calendario es demasiado grande para un solo correo. Toca el cuadro, Seleccionar todo y Copiar, y guárdalo en un lugar seguro (como Notas o un correo).", "Il calendario è troppo grande per una sola e-mail. Tocca il riquadro, Seleziona tutto e Copia, e conservalo in un posto sicuro (come Note o un’e-mail).", "O calendário é grande demais para um só e-mail. Toque na caixa, Selecionar tudo e Copiar, e guarde-o num sítio seguro (como as Notas ou um e-mail)."],
+    'Paste a backup below, then tap Restore. This replaces everything on this iPad.': ["Collez une sauvegarde ci-dessous, puis touchez Restaurer. Cela remplace tout sur cet iPad.", "Pega una copia abajo y toca Restaurar. Esto reemplaza todo en este iPad.", "Incolla un backup qui sotto, poi tocca Ripristina. Sostituisce tutto su questo iPad.", "Cole uma cópia abaixo e toque em Restaurar. Isto substitui tudo neste iPad."],
+    'Paste backup here': ["Collez la sauvegarde ici", "Pega la copia aquí", "Incolla qui il backup", "Cole a cópia aqui"],
+    'Restore': ["Restaurer", "Restaurar", "Ripristina", "Restaurar"],
+    'That doesn’t look like a calendar backup': ["Ça ne ressemble pas à une sauvegarde du calendrier", "Eso no parece una copia del calendario", "Questo non sembra un backup del calendario", "Isto não parece uma cópia do calendário"],
+    'Replace this calendar?': ["Remplacer ce calendrier ?", "¿Reemplazar este calendario?", "Sostituire questo calendario?", "Substituir este calendário?"],
+    'Everything on this iPad will be replaced with the {n} {n:event|events} in the backup.': ["Tout sur cet iPad sera remplacé par {n:l’événement|les {n} événements} de la sauvegarde.", "Todo lo de este iPad se reemplazará por {n:el evento|los {n} eventos} de la copia.", "Tutto su questo iPad verrà sostituito con {n:l’evento|i {n} eventi} del backup.", "Tudo neste iPad será substituído {n:pelo evento|pelos {n} eventos} da cópia."],
+    'Restore Backup': ["Restaurer la sauvegarde", "Restaurar la copia", "Ripristina il backup", "Restaurar a cópia"],
+    'Backup restored': ["Sauvegarde restaurée", "Copia restaurada", "Backup ripristinato", "Cópia restaurada"],
+    'Day': ["Jour", "Día", "Giorno", "Dia"],
+    'Week': ["Semaine", "Semana", "Settimana", "Semana"],
+    'Month': ["Mois", "Mes", "Mese", "Mês"],
+    'List': ["Liste", "Lista", "Elenco", "Lista"],
+    'Every Day': ["Tous les jours", "Todos los días", "Ogni giorno", "Todos os dias"],
+    'Every Weekday (Mon–Fri)': ["Jours de semaine (lun–ven)", "Entre semana (lun–vie)", "Giorni feriali (lun–ven)", "Dias úteis (seg–sex)"],
+    'Every Week': ["Chaque semaine", "Cada semana", "Ogni settimana", "Todas as semanas"],
+    'Every 2 Weeks': ["Toutes les 2 semaines", "Cada 2 semanas", "Ogni 2 settimane", "De 2 em 2 semanas"],
+    'Every Month': ["Tous les mois", "Cada mes", "Ogni mese", "Todos os meses"],
+    'Every Year': ["Tous les ans", "Cada año", "Ogni anno", "Todos os anos"],
+    'Family': ["Famille", "Familia", "Famiglia", "Família"],
+    'Work': ["Travail", "Trabajo", "Lavoro", "Trabalho"],
+    'School': ["École", "Escuela", "Scuola", "Escola"],
+    'Kids’ Activities': ["Activités des enfants", "Actividades de los niños", "Attività dei bambini", "Atividades das crianças"],
+    'Birthdays': ["Anniversaires", "Cumpleaños", "Compleanni", "Aniversários"],
+    'Appointments': ["Rendez-vous", "Citas", "Appuntamenti", "Consultas"]
+  };
+  /*@@END@@*/
+  var CLANG = 'en', CLX;
+  function setLang(l) {
+    CLANG = /^(en|fr|es|it|pt)$/.test(l || '') ? l : 'en';
+    CLX = { fr: 0, es: 1, it: 2, pt: 3 }[CLANG];
+    var d = CAL_D[CLANG]; DAYS = d[0]; DSH = d[1]; MON = d[2]; MSH = d[3];
+    try { document.documentElement.lang = CLANG; } catch (e) {}
+    var els = document.querySelectorAll('[data-t]');
+    for (var i = 0; i < els.length; i++) els[i].textContent = tt(els[i].getAttribute('data-t'));
+  }
+  // {name} is filled in; {n:one|many} picks by a.n
+  function tt(s, a) {
+    var r = s;
+    if (CLX !== undefined) { var e = CTR[s]; if (e && e[CLX] != null) r = e[CLX]; else if (window.__miss) window.__miss[s] = 1; }
+    if (a) {
+      r = r.replace(/\{(\w+)\}/g, function (m, k) { return a[k] !== undefined ? a[k] : m; });
+      r = r.replace(/\{([a-z]):([^|}]*)\|([^}]*)\}/g, function (m, k, x, y) { return a[k] === 1 ? x : y; });
+    }
+    return r;
+  }
+  function capf(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+  // "Nov 9" / "9 nov."
+  function fmtMD(d) { return CLANG === 'en' ? MSH[d.getMonth()] + ' ' + d.getDate() : d.getDate() + ' ' + MSH[d.getMonth()]; }
+  function fmtMDY(d) { return CLANG === 'en' ? fmtMD(d) + ', ' + d.getFullYear() : fmtMD(d) + ' ' + d.getFullYear(); }
+  // "Monday, November 9" / "lundi 9 novembre" / "lunes, 9 de noviembre"
+  function fmtDL(d) {
+    var dn = DAYS[d.getDay()], m = MON[d.getMonth()], n = d.getDate();
+    if (CLANG === 'en') return dn + ', ' + m + ' ' + n;
+    if (CLANG === 'es' || CLANG === 'pt') return capf(dn) + ', ' + n + ' de ' + m;
+    return capf(dn) + ' ' + n + ' ' + m;
+  }
+  function fmtDLY(d) { return fmtDL(d) + (CLANG === 'en' ? ', ' : CLANG === 'es' || CLANG === 'pt' ? ' de ' : ' ') + d.getFullYear(); }
+  setLang(db.set.lang);
+  // the starter calendars follow the language until someone renames them
+  var DEFNAMES = ['Family', 'Work', 'School', 'Kids’ Activities', 'Birthdays', 'Appointments'];
+  function renameDefaults(from, to) {
+    for (var i = 0; i < db.cals.length; i++) {
+      var c = db.cals[i], n = +String(c.id).replace('c', '') - 1;
+      if (String(c.id).match(/^c[1-6]$/) && c.name === defName(n, from)) c.name = defName(n, to);
+    }
+  }
+  function defName(n, l) { var en = DEFNAMES[n]; if (l === 'en') return en; var e = CTR[en]; return e ? e[{ fr: 0, es: 1, it: 2, pt: 3 }[l]] : en; }
   function save() {
     try { localStorage.setItem(KEY, JSON.stringify(db)); $('banner').style.display = 'none'; }
     catch (e) {
       var b = $('banner'); b.style.display = 'block';
-      b.innerHTML = '⚠️ Changes can’t be saved on this iPad right now. If Private Browsing is on in Safari, turn it off.';
+      b.innerHTML = '⚠️ ' + tt('Changes can’t be saved on this iPad right now. If Private Browsing is on in Safari, turn it off.');
     }
   }
 
@@ -276,7 +441,7 @@ textarea{display:block;width:100%;height:90px;padding:12px 16px;resize:none;back
     return h12 + ':' + pad(mm) + (h < 12 ? ' AM' : ' PM');
   }
   function hourLabel(h) { if (db.set.h24) return pad(h) + ':00'; return (h % 12 || 12) + (h < 12 ? ' AM' : ' PM'); }
-  function shortDate(k) { var d = parse(k); return DSH[d.getDay()] + ', ' + MSH[d.getMonth()] + ' ' + d.getDate(); }
+  function shortDate(k) { var d = parse(k); return DSH[d.getDay()] + (CLANG === 'en' || CLANG === 'es' ? ', ' : ' ') + fmtMD(d); }
 
   /* ================= colours ================= */
   function rgb(h) { return [parseInt(h.substr(1, 2), 16), parseInt(h.substr(3, 2), 16), parseInt(h.substr(5, 2), 16)]; }
@@ -366,26 +531,30 @@ textarea{display:block;width:100%;height:90px;padding:12px 16px;resize:none;back
   function repText(r) {
     if (!r || !r.f || r.f === 'none') return '';
     var t;
-    if (r.f === 'daily') t = 'Every day';
+    if (r.f === 'daily') t = tt('Every day');
     else if (r.f === 'weekly') {
       var d = (r.d || []).slice().sort();
-      if ((r.i || 1) === 1 && d.join() === '1,2,3,4,5') t = 'Every weekday';
-      else { var names = []; for (var i = 0; i < d.length; i++) names.push(DSH[d[i]]); t = ((r.i || 1) === 2 ? 'Every 2 weeks' : 'Weekly') + (names.length ? ' on ' + names.join(', ') : ''); }
+      if ((r.i || 1) === 1 && d.join() === '1,2,3,4,5') t = tt('Every weekday');
+      else {
+        var names = []; for (var i = 0; i < d.length; i++) names.push(DSH[d[i]]);
+        var two = (r.i || 1) === 2;
+        t = names.length ? tt(two ? 'Every 2 weeks on {d}' : 'Weekly on {d}', { d: names.join(', ') }) : tt(two ? 'Every 2 weeks' : 'Weekly');
+      }
     }
-    else if (r.f === 'monthly') t = 'Every month';
-    else t = 'Every year';
-    if (r.u) { var u = parse(r.u); t += ' until ' + MSH[u.getMonth()] + ' ' + u.getDate() + ', ' + u.getFullYear(); }
+    else if (r.f === 'monthly') t = tt('Every month');
+    else t = tt('Every year');
+    if (r.u) t = tt('{r} until {d}', { r: t, d: fmtMDY(parse(r.u)) });
     return t;
   }
   function timeText(it, dayKey) {
     if (it.all) {
-      if (it.e !== it.d) return 'All day · ' + MSH[parse(it.d).getMonth()] + ' ' + parse(it.d).getDate() + ' – ' + MSH[parse(it.e).getMonth()] + ' ' + parse(it.e).getDate();
-      return 'All day';
+      if (it.e !== it.d) return tt('All day') + ' · ' + fmtMD(parse(it.d)) + ' – ' + fmtMD(parse(it.e));
+      return tt('All day');
     }
     var a = fmtT(it.st), b = fmtT(it.et);
     if (it.e !== it.d) {
-      if (dayKey && dayKey !== it.d && dayKey !== it.e) return 'All day (continues)';
-      return (dayKey && dayKey !== it.d ? 'Until ' + b : a + ' – ' + shortDate(it.e) + ' ' + b);
+      if (dayKey && dayKey !== it.d && dayKey !== it.e) return tt('All day (continues)');
+      return (dayKey && dayKey !== it.d ? tt('Until {t}', { t: b }) : a + ' – ' + shortDate(it.e) + ' ' + b);
     }
     return a + ' – ' + b;
   }
@@ -394,12 +563,14 @@ textarea{display:block;width:100%;height:90px;padding:12px 16px;resize:none;back
   var view = db.set.view || 'month', cur = today(), sel = key(today()), listDays = 60, gridScroll = null, gridRange = '';
   function setTitle() {
     var t, s, e;
-    if (view === 'month') t = MON[cur.getMonth()] + ' <span>' + cur.getFullYear() + '</span>';
+    if (view === 'month') t = capf(MON[cur.getMonth()]) + ' <span>' + cur.getFullYear() + '</span>';
     else if (view === 'week') {
       s = startOfWeek(cur); e = addDays(s, 6);
-      t = (s.getMonth() === e.getMonth() ? MON[s.getMonth()] + ' ' + s.getDate() + ' – ' + e.getDate() : MSH[s.getMonth()] + ' ' + s.getDate() + ' – ' + MSH[e.getMonth()] + ' ' + e.getDate()) + ' <span>' + e.getFullYear() + '</span>';
-    } else if (view === 'day') t = DAYS[cur.getDay()] + ', ' + MON[cur.getMonth()] + ' ' + cur.getDate() + ' <span>' + cur.getFullYear() + '</span>';
-    else t = 'Upcoming <span>from ' + MSH[cur.getMonth()] + ' ' + cur.getDate() + '</span>';
+      if (CLANG === 'en') t = s.getMonth() === e.getMonth() ? MON[s.getMonth()] + ' ' + s.getDate() + ' – ' + e.getDate() : fmtMD(s) + ' – ' + fmtMD(e);
+      else t = s.getMonth() === e.getMonth() ? s.getDate() + ' – ' + e.getDate() + ' ' + MON[s.getMonth()] : fmtMD(s) + ' – ' + fmtMD(e);
+      t += ' <span>' + e.getFullYear() + '</span>';
+    } else if (view === 'day') t = fmtDL(cur) + ' <span>' + cur.getFullYear() + '</span>';
+    else t = tt('Upcoming') + ' <span>' + tt('from {d}', { d: fmtMD(cur) }) + '</span>';
     $('ttl').innerHTML = t;
     var b = $('seg').getElementsByTagName('button');
     for (var i = 0; i < b.length; i++) b[i].classList.toggle('sel', b[i].getAttribute('data-v') === view);
@@ -438,7 +609,7 @@ textarea{display:block;width:100%;height:90px;padding:12px 16px;resize:none;back
         h += '<div class="mnum' + (k === tk ? ' today' : '') + '">' + d.getDate() + '</div>';
         var showN = items.length > maxChips ? maxChips - 1 : items.length;
         for (var j = 0; j < showN; j++) h += chip(items[j]);
-        if (items.length > showN) h += '<div class="more">+' + (items.length - showN) + ' more</div>';
+        if (items.length > showN) h += '<div class="more">' + tt('+{n} more', { n: items.length - showN }) + '</div>';
         h += '</div>';
       }
       h += '</div>';
@@ -454,8 +625,8 @@ textarea{display:block;width:100%;height:90px;padding:12px 16px;resize:none;back
   }
   function renderPanel() {
     var d = parse(sel), items = byDay(instances(d, d), d, d)[sel] || [];
-    var h = '<div class="phead"><div><div class="pday">' + (sel === key(today()) ? 'Today' : DAYS[d.getDay()]) + '</div></div><div class="pdate">' + (sel === key(today()) ? DAYS[d.getDay()] + ', ' : '') + MON[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear() + '</div><button class="padd" data-act="add" data-d="' + sel + '">+ Add Event</button></div>';
-    if (!items.length) h += '<div class="empty">Nothing planned</div>';
+    var h = '<div class="phead"><div><div class="pday">' + (sel === key(today()) ? tt('Today') : capf(DAYS[d.getDay()])) + '</div></div><div class="pdate">' + fmtDLY(d) + '</div><button class="padd" data-act="add" data-d="' + sel + '">+ ' + tt('Add Event') + '</button></div>';
+    if (!items.length) h += '<div class="empty">' + tt('Nothing planned') + '</div>';
     for (var i = 0; i < items.length; i++) h += itemHTML(items[i], sel, 'pitem');
     $('dpanel').innerHTML = h;
   }
@@ -493,9 +664,9 @@ textarea{display:block;width:100%;height:90px;padding:12px 16px;resize:none;back
     var h = '<div class="wk' + (single ? ' day' : '') + '"><div class="wkhead"><div class="gut"></div>';
     for (i = 0; i < days.length; i++) {
       k = key(days[i]);
-      h += '<div class="wkday' + (k === tk ? ' today' : '') + '" data-act="goday" data-d="' + k + '"><span>' + (single ? DAYS[days[i].getDay()] : DSH[days[i].getDay()]) + '</span><b>' + days[i].getDate() + '</b></div>';
+      h += '<div class="wkday' + (k === tk ? ' today' : '') + '" data-act="goday" data-d="' + k + '"><span>' + (single ? capf(DAYS[days[i].getDay()]) : DSH[days[i].getDay()]) + '</span><b>' + days[i].getDate() + '</b></div>';
     }
-    h += '</div><div class="wkall"><div class="gut">all-day</div>';
+    h += '</div><div class="wkall"><div class="gut">' + tt('all-day') + '</div>';
     for (i = 0; i < days.length; i++) {
       k = key(days[i]); var al = (allMap[k] || []).sort(sortI);
       h += '<div class="alld" data-act="newall" data-d="' + k + '">';
@@ -548,19 +719,19 @@ textarea{display:block;width:100%;height:90px;padding:12px 16px;resize:none;back
     }
     keys.sort();
     var h = '<div class="list scroll" id="lst"><div class="lgroup">';
-    if (!keys.length) h += '<div class="empty" style="padding-top:80px">Nothing planned in the next ' + listDays + ' days.<br>Tap + to add an event.</div>';
+    if (!keys.length) h += '<div class="empty" style="padding-top:80px">' + tt('Nothing planned in the next {n} days.', { n: listDays }) + '<br>' + tt('Tap + to add an event.') + '</div>';
     for (i = 0; i < keys.length; i++) {
       var d = parse(keys[i]), g = groups[keys[i]].sort(sortI);
-      h += '<div class="lhead' + (keys[i] === tk ? ' today' : '') + '">' + (keys[i] === tk ? 'Today · ' : '') + DAYS[d.getDay()] + ', ' + MON[d.getMonth()] + ' ' + d.getDate() + (d.getFullYear() !== today().getFullYear() ? ', ' + d.getFullYear() : '') + '</div>';
+      h += '<div class="lhead' + (keys[i] === tk ? ' today' : '') + '">' + (keys[i] === tk ? tt('Today') + ' · ' : '') + (d.getFullYear() !== today().getFullYear() ? fmtDLY(d) : fmtDL(d)) + '</div>';
       for (var j = 0; j < g.length; j++) {
         var it = g[j];
-        h += '<div class="litem flex" data-act="open" data-id="' + it.ev.id + '" data-o="' + it.d + '"><div class="lt">' + (it.all ? 'All day' : fmtT(it.st) + '<br>' + fmtT(it.et)) + '</div><i style="background:' + it.c + '"></i><div class="grow"><b>' + esc(it.ev.t) + '</b>';
+        h += '<div class="litem flex" data-act="open" data-id="' + it.ev.id + '" data-o="' + it.d + '"><div class="lt">' + (it.all ? tt('All day') : fmtT(it.st) + '<br>' + fmtT(it.et)) + '</div><i style="background:' + it.c + '"></i><div class="grow"><b>' + esc(it.ev.t) + '</b>';
         if (it.ev.loc) h += '<span>' + esc(it.ev.loc) + '</span>';
-        if (it.e2 !== it.d) h += '<span>Until ' + shortDate(it.e2) + '</span>';
+        if (it.e2 !== it.d) h += '<span>' + tt('Until {t}', { t: shortDate(it.e2) }) + '</span>';
         h += '<span>' + esc(calOf(it.ev).name) + (it.ev.rep ? ' · ↻ ' + repText(it.ev.rep) : '') + '</span></div></div>';
       }
     }
-    h += '<button class="lmore" data-act="more">Show more</button></div></div>';
+    h += '<button class="lmore" data-act="more">' + tt('Show more') + '</button></div></div>';
     $('view').innerHTML = h;
   }
 
@@ -605,22 +776,22 @@ textarea{display:block;width:100%;height:90px;padding:12px 16px;resize:none;back
     var startDow = parse(f.date).getDay();
     ed = { ev: ev, occ: occ, cal: calById(f.cal) ? f.cal : db.cals[0].id, all: !!f.all, days: (f.rep && f.rep.f === 'weekly' && f.rep.d && f.rep.d.length) ? f.rep.d.slice() : [startDow] };
     var rv = repValue(f.rep), i;
-    var h = '<div class="shead"><button class="link l" data-act="ecancel">Cancel</button>' + (ev ? 'Edit Event' : 'New Event') + '<button class="link r" data-act="esave">' + (ev ? 'Done' : 'Add') + '</button></div><div class="sbody">';
-    h += '<div class="group"><input class="tin big" id="fT" placeholder="Title" value="' + esc(f.t) + '"><input class="tin" id="fL" placeholder="Location" value="' + esc(f.loc) + '"></div>';
-    h += '<div class="group"><div class="row flex"><label>All-day</label><button class="sw' + (ed.all ? ' on' : '') + '" id="fA" data-act="eall"></button></div>';
-    h += '<div class="row flex"><label>Starts</label><input class="pick" type="date" id="fSD" value="' + f.date + '"><input class="pick tm" type="time" id="fST" value="' + f.st + '"></div>';
-    h += '<div class="row flex"><label>Ends</label><input class="pick" type="date" id="fED" value="' + f.end + '"><input class="pick tm" type="time" id="fET" value="' + f.et + '"></div></div>';
-    h += '<div class="group"><div class="row flex"><label>Repeat</label><select class="pick" id="fR">';
+    var h = '<div class="shead"><button class="link l" data-act="ecancel">' + tt('Cancel') + '</button>' + tt(ev ? 'Edit Event' : 'New Event') + '<button class="link r" data-act="esave">' + tt(ev ? 'Done' : 'Add') + '</button></div><div class="sbody">';
+    h += '<div class="group"><input class="tin big" id="fT" placeholder="' + tt('Title') + '" value="' + esc(f.t) + '"><input class="tin" id="fL" placeholder="' + tt('Location') + '" value="' + esc(f.loc) + '"></div>';
+    h += '<div class="group"><div class="row flex"><label>' + tt('All-day') + '</label><button class="sw' + (ed.all ? ' on' : '') + '" id="fA" data-act="eall"></button></div>';
+    h += '<div class="row flex"><label>' + tt('Starts') + '</label><input class="pick" type="date" id="fSD" value="' + f.date + '"><input class="pick tm" type="time" id="fST" value="' + f.st + '"></div>';
+    h += '<div class="row flex"><label>' + tt('Ends') + '</label><input class="pick" type="date" id="fED" value="' + f.end + '"><input class="pick tm" type="time" id="fET" value="' + f.et + '"></div></div>';
+    h += '<div class="group"><div class="row flex"><label>' + tt('Repeat') + '</label><select class="pick" id="fR">';
     var opts = [['none', 'Never'], ['daily', 'Every Day'], ['weekdays', 'Every Weekday (Mon–Fri)'], ['weekly', 'Every Week'], ['biweekly', 'Every 2 Weeks'], ['monthly', 'Every Month'], ['yearly', 'Every Year']];
-    for (i = 0; i < opts.length; i++) h += '<option value="' + opts[i][0] + '"' + (opts[i][0] === rv ? ' selected' : '') + '>' + opts[i][1] + '</option>';
+    for (i = 0; i < opts.length; i++) h += '<option value="' + opts[i][0] + '"' + (opts[i][0] === rv ? ' selected' : '') + '>' + tt(opts[i][1]) + '</option>';
     h += '</select></div><div class="row days flex" id="fDays">';
-    for (i = 0; i < 7; i++) { var dn = (i + (db.set.weekStart || 0)) % 7; h += '<button data-act="eday" data-n="' + dn + '"' + (ed.days.indexOf(dn) >= 0 ? ' class="sel"' : '') + '>' + DSH[dn].charAt(0) + (dn === 2 || dn === 4 ? DSH[dn].charAt(1) : '') + '</button>'; }
+    for (i = 0; i < 7; i++) { var dn = (i + (db.set.weekStart || 0)) % 7; h += '<button data-act="eday" data-n="' + dn + '"' + (ed.days.indexOf(dn) >= 0 ? ' class="sel"' : '') + '>' + DAY1[CLANG][dn] + '</button>'; }
     var until = f.rep && f.rep.u;
-    h += '</div><div class="row flex" id="fRErow"><label>End Repeat</label><select class="pick" id="fRE"><option value="never"' + (until ? '' : ' selected') + '>Never</option><option value="on"' + (until ? ' selected' : '') + '>On Date</option></select><input class="pick" type="date" id="fU" value="' + (until || key(addDays(parse(f.date), 90))) + '"></div></div>';
-    h += '<div class="glabel">Calendar</div><div class="group"><div class="cals flex" id="fC">';
+    h += '</div><div class="row flex" id="fRErow"><label>' + tt('End Repeat') + '</label><select class="pick" id="fRE"><option value="never"' + (until ? '' : ' selected') + '>' + tt('Never') + '</option><option value="on"' + (until ? ' selected' : '') + '>' + tt('On Date') + '</option></select><input class="pick" type="date" id="fU" value="' + (until || key(addDays(parse(f.date), 90))) + '"></div></div>';
+    h += '<div class="glabel">' + tt('Calendar') + '</div><div class="group"><div class="cals flex" id="fC">';
     for (i = 0; i < db.cals.length; i++) h += calPill(db.cals[i]);
-    h += '</div></div><div class="group"><textarea id="fN" placeholder="Notes">' + esc(f.notes) + '</textarea></div>';
-    if (ev) h += '<button class="danger" data-act="edelete">Delete Event</button>';
+    h += '</div></div><div class="group"><textarea id="fN" placeholder="' + tt('Notes') + '">' + esc(f.notes) + '</textarea></div>';
+    if (ev) h += '<button class="danger" data-act="edelete">' + tt('Delete Event') + '</button>';
     h += '</div>';
     openSheet(h);
     $('fR').addEventListener('change', edVisibility, false);
@@ -677,7 +848,7 @@ textarea{display:block;width:100%;height:90px;padding:12px 16px;resize:none;back
       while (rep.d.indexOf(s.getDay()) < 0 && g < 7) { s = addDays(s, 1); g++; }
       sd = key(s); ed2 = key(addDays(s, span));
     }
-    return { t: $('fT').value.replace(/^\s+|\s+$/g, '') || 'New Event', loc: $('fL').value.replace(/^\s+|\s+$/g, ''), all: ed.all, date: sd, end: ed2, st: ed.all ? '00:00' : st, et: ed.all ? '00:00' : et, rep: rep, cal: ed.cal, notes: $('fN').value };
+    return { t: $('fT').value.replace(/^\s+|\s+$/g, '') || tt('New Event'), loc: $('fL').value.replace(/^\s+|\s+$/g, ''), all: ed.all, date: sd, end: ed2, st: ed.all ? '00:00' : st, et: ed.all ? '00:00' : et, rep: rep, cal: ed.cal, notes: $('fN').value };
   }
   function apply(ev, f) { ev.t = f.t; ev.loc = f.loc; ev.all = f.all; ev.date = f.date; ev.end = f.end; ev.st = f.st; ev.et = f.et; ev.rep = f.rep; ev.cal = f.cal; ev.notes = f.notes; if (!ev.rep) ev.ex = []; return ev; }
   function make(f) { return apply({ id: uid('e'), ex: [] }, f); }
@@ -685,12 +856,12 @@ textarea{display:block;width:100%;height:90px;padding:12px 16px;resize:none;back
   function saveEditor() {
     blur();
     var f = readForm(); db.set.lastCal = f.cal;
-    if (!ed.ev) { db.events.push(make(f)); jumpTo(f.date); finish('Event added'); return; }
+    if (!ed.ev) { db.events.push(make(f)); jumpTo(f.date); finish(tt('Event added')); return; }
     var ev = ed.ev, occ = ed.occ;
-    if (!ev.rep) { apply(ev, f); jumpTo(f.date); finish('Saved'); return; }
-    ask('This is a repeating event.', 'Save your changes for just this one, or for this and all future ones?', [
-      { label: 'Save for This Event Only', fn: function () { (ev.ex = ev.ex || []).push(occ); var ne = make(f); ne.rep = null; ne.ex = []; db.events.push(ne); finish('Saved'); } },
-      { label: 'Save for Future Events', fn: function () {
+    if (!ev.rep) { apply(ev, f); jumpTo(f.date); finish(tt('Saved')); return; }
+    ask(tt('This is a repeating event.'), tt('Save your changes for just this one, or for this and all future ones?'), [
+      { label: tt('Save for This Event Only'), fn: function () { (ev.ex = ev.ex || []).push(occ); var ne = make(f); ne.rep = null; ne.ex = []; db.events.push(ne); finish(tt('Saved')); } },
+      { label: tt('Save for Future Events'), fn: function () {
         if (occ <= ev.date) apply(ev, f);
         else {
           var ne = make(f), keep = [];
@@ -699,22 +870,22 @@ textarea{display:block;width:100%;height:90px;padding:12px 16px;resize:none;back
           ev.rep.u = key(addDays(parse(occ), -1));
           db.events.push(ne);
         }
-        finish('Saved');
+        finish(tt('Saved'));
       } },
-      { label: 'Cancel', cls: 'bold' }
+      { label: tt('Cancel'), cls: 'bold' }
     ]);
   }
   function deleteEvent() {
     var ev = ed.ev, occ = ed.occ;
     var removeAll = function () { db.events.splice(db.events.indexOf(ev), 1); };
     if (!ev.rep) {
-      ask('Delete “' + esc(ev.t) + '”?', '', [{ label: 'Delete Event', cls: 'red', fn: function () { removeAll(); finish('Deleted'); } }, { label: 'Cancel', cls: 'bold' }]);
+      ask(tt('Delete “{x}”?', { x: esc(ev.t) }), '', [{ label: tt('Delete Event'), cls: 'red', fn: function () { removeAll(); finish(tt('Deleted')); } }, { label: tt('Cancel'), cls: 'bold' }]);
       return;
     }
-    ask('This is a repeating event.', 'Delete just this one, or this and all future ones?', [
-      { label: 'Delete This Event Only', cls: 'red', fn: function () { (ev.ex = ev.ex || []).push(occ); finish('Deleted'); } },
-      { label: 'Delete All Future Events', cls: 'red', fn: function () { if (occ <= ev.date) removeAll(); else ev.rep.u = key(addDays(parse(occ), -1)); finish('Deleted'); } },
-      { label: 'Cancel', cls: 'bold' }
+    ask(tt('This is a repeating event.'), tt('Delete just this one, or this and all future ones?'), [
+      { label: tt('Delete This Event Only'), cls: 'red', fn: function () { (ev.ex = ev.ex || []).push(occ); finish(tt('Deleted')); } },
+      { label: tt('Delete All Future Events'), cls: 'red', fn: function () { if (occ <= ev.date) removeAll(); else ev.rep.u = key(addDays(parse(occ), -1)); finish(tt('Deleted')); } },
+      { label: tt('Cancel'), cls: 'bold' }
     ]);
   }
   function jumpTo(k) {
@@ -726,22 +897,25 @@ textarea{display:block;width:100%;height:90px;padding:12px 16px;resize:none;back
 
   /* ================= calendars + settings ================= */
   function openCals() {
-    var h = '<div class="shead">Calendars<button class="link r" data-act="sclose">Done</button></div><div class="sbody"><div class="group">';
+    var h = '<div class="shead">' + tt('Calendars') + '<button class="link r" data-act="sclose">' + tt('Done') + '</button></div><div class="sbody"><div class="group">';
     for (var i = 0; i < db.cals.length; i++) {
       var c = db.cals[i];
       h += '<div class="crow"><div class="flex"><button class="eye" data-act="ctoggle" data-c="' + c.id + '" style="border-color:' + c.color + ';background:' + (c.on ? c.color : '#fff') + ';color:' + onColour(c.color) + '">' + (c.on ? '✓' : '') + '</button>';
-      h += '<input class="cname" data-c="' + c.id + '" value="' + esc(c.name) + '"><button class="cdel" data-act="cdel" data-c="' + c.id + '">Delete</button></div><div class="dots flex">';
+      h += '<input class="cname" data-c="' + c.id + '" value="' + esc(c.name) + '"><button class="cdel" data-act="cdel" data-c="' + c.id + '">' + tt('Delete') + '</button></div><div class="dots flex">';
       for (var j = 0; j < PALETTE.length; j++) h += '<button data-act="ccolor" data-c="' + c.id + '" data-col="' + PALETTE[j] + '" style="background:' + PALETTE[j] + '"' + (PALETTE[j] === c.color ? ' class="sel"' : '') + '></button>';
       h += '</div></div>';
     }
-    h += '<button class="addrow" data-act="cadd">+ Add Calendar</button></div>';
-    h += '<div class="note">Tap the circle to show or hide a calendar. Tap a colour to change it.</div>';
-    h += '<div class="glabel">Settings</div><div class="group">';
-    h += '<div class="row flex"><label>Week starts on</label><div class="seg2 flex"><button data-act="ws" data-v="0"' + (!db.set.weekStart ? ' class="sel"' : '') + '>Sunday</button><button data-act="ws" data-v="1"' + (db.set.weekStart === 1 ? ' class="sel"' : '') + '>Monday</button></div></div>';
-    h += '<div class="row flex"><label>Time</label><div class="seg2 flex"><button data-act="h24" data-v="0"' + (!db.set.h24 ? ' class="sel"' : '') + '>12-hour</button><button data-act="h24" data-v="1"' + (db.set.h24 ? ' class="sel"' : '') + '>24-hour</button></div></div></div>';
-    h += '<div class="glabel">Backup</div><div class="group"><div class="note">Everything is saved on this iPad only. Make a backup every so often so nothing is lost if Safari’s data gets cleared.</div>';
-    h += '<button class="wbtn" data-act="bexport">Back Up Calendar…</button><button class="wbtn" data-act="bimport">Restore From a Backup…</button><div id="bArea"></div></div>';
-    h += '<div class="note" style="text-align:center;margin-top:10px">' + db.events.length + ' event' + (db.events.length === 1 ? '' : 's') + ' saved</div></div>';
+    h += '<button class="addrow" data-act="cadd">+ ' + tt('Add Calendar') + '</button></div>';
+    h += '<div class="note">' + tt('Tap the circle to show or hide a calendar. Tap a colour to change it.') + '</div>';
+    h += '<div class="glabel">' + tt('Settings') + '</div><div class="group">';
+    h += '<div class="row flex langrow"><label>' + tt('Language') + '</label><div class="seg2 flex">';
+    for (var li = 0; li < LANGS.length; li++) h += '<button data-act="lang" data-v="' + LANGS[li][0] + '"' + (LANGS[li][0] === CLANG ? ' class="sel"' : '') + '>' + LANGS[li][1] + '</button>';
+    h += '</div></div>';
+    h += '<div class="row flex"><label>' + tt('Week starts on') + '</label><div class="seg2 flex"><button data-act="ws" data-v="0"' + (!db.set.weekStart ? ' class="sel"' : '') + '>' + capf(CAL_D[CLANG][0][0]) + '</button><button data-act="ws" data-v="1"' + (db.set.weekStart === 1 ? ' class="sel"' : '') + '>' + capf(CAL_D[CLANG][0][1]) + '</button></div></div>';
+    h += '<div class="row flex"><label>' + tt('Time') + '</label><div class="seg2 flex"><button data-act="h24" data-v="0"' + (!db.set.h24 ? ' class="sel"' : '') + '>' + tt('12-hour') + '</button><button data-act="h24" data-v="1"' + (db.set.h24 ? ' class="sel"' : '') + '>' + tt('24-hour') + '</button></div></div></div>';
+    h += '<div class="glabel">' + tt('Backup') + '</div><div class="group"><div class="note">' + tt('Everything is saved on this iPad only. Make a backup every so often so nothing is lost if Safari’s data gets cleared.') + '</div>';
+    h += '<button class="wbtn" data-act="bexport">' + tt('Back Up Calendar…') + '</button><button class="wbtn" data-act="bimport">' + tt('Restore From a Backup…') + '</button><div id="bArea"></div></div>';
+    h += '<div class="note" style="text-align:center;margin-top:10px">' + tt('{n} {n:event|events} saved', { n: db.events.length }) + '</div></div>';
     var keepScroll = $('sheetOv').classList.contains('on') ? $('sheet').scrollTop : 0;
     openSheet(h);
     $('sheet').scrollTop = keepScroll;
@@ -826,42 +1000,51 @@ textarea{display:block;width:100%;height:90px;padding:12px 16px;resize:none;back
       var used = {}, col = PALETTE[0], i;
       for (i = 0; i < db.cals.length; i++) used[db.cals[i].color] = 1;
       for (i = 0; i < PALETTE.length; i++) if (!used[PALETTE[i]]) { col = PALETTE[i]; break; }
-      db.cals.push({ id: uid('c'), name: 'New Calendar', color: col, on: true }); save(); openCals();
+      db.cals.push({ id: uid('c'), name: tt('New Calendar'), color: col, on: true }); save(); openCals();
       var sh = $('sheet'); setTimeout(function () { var ins = document.querySelectorAll('.cname'); if (ins.length) sh.scrollTop = ins[ins.length - 1].offsetTop - 120; }, 30);
     },
     cdel: function (el) {
       var c = calById(el.getAttribute('data-c')); if (!c) return;
-      if (db.cals.length === 1) { toast('You need at least one calendar'); return; }
+      if (db.cals.length === 1) { toast(tt('You need at least one calendar')); return; }
       var n = 0, i; for (i = 0; i < db.events.length; i++) if (db.events[i].cal === c.id) n++;
-      ask('Delete “' + esc(c.name) + '”?', n ? 'Its ' + n + ' event' + (n === 1 ? '' : 's') + ' will be deleted too.' : '', [
-        { label: 'Delete Calendar', cls: 'red', fn: function () {
+      ask(tt('Delete “{x}”?', { x: esc(c.name) }), n ? tt('Its {n} {n:event|events} will be deleted too.', { n: n }) : '', [
+        { label: tt('Delete Calendar'), cls: 'red', fn: function () {
           db.events = db.events.filter(function (e) { return e.cal !== c.id; });
           db.cals.splice(db.cals.indexOf(c), 1);
           if (db.set.lastCal === c.id) db.set.lastCal = db.cals[0].id;
           save(); openCals(); render();
         } },
-        { label: 'Cancel', cls: 'bold' }]);
+        { label: tt('Cancel'), cls: 'bold' }]);
     },
     ws: function (el) { db.set.weekStart = +el.getAttribute('data-v'); save(); gridRange = ''; openCals(); render(); },
-    h24: function (el) { db.set.h24 = el.getAttribute('data-v') === '1'; save(); openCals(); render(); },
+    h24: function (el) { db.set.h24 = el.getAttribute('data-v') === '1'; db.set.h24set = true; save(); openCals(); render(); },
+    lang: function (el) {
+      var l = el.getAttribute('data-v'), was = CLANG;
+      if (l === was) return;
+      db.set.lang = l; setLang(l); renameDefaults(was, l);
+      // French, Spanish, Italian and Portuguese calendars usually use 24-hour time and start on Monday
+      if (was === 'en' && db.set.h24 === false && !db.set.h24set) db.set.h24 = true;
+      if (l === 'en' && !db.set.h24set) db.set.h24 = false;
+      save(); render(); openCals(); toast(tt('Language changed'));
+    },
     bexport: function () {
       var data = JSON.stringify(db), d = today();
-      var subj = 'Family Calendar backup ' + MSH[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+      var subj = tt('Family Calendar backup {d}', { d: fmtMDY(d) });
       var mail = 'mailto:?subject=' + encodeURIComponent(subj) + '&body=' + encodeURIComponent(data);
       // very long email links can fail, so big calendars use copy and paste instead
-      var link = mail.length < 60000 ? '<a href="' + mail + '">✉️ Email the backup to myself</a>' : '';
-      $('bArea').innerHTML = '<div class="note">' + (link ? 'Email this to yourself, or tap' : 'Your calendar is too big to email in one go. Tap') + ' in the box, Select All, and Copy it somewhere safe (like Notes or an email).</div>' + link + '<textarea readonly id="bOut">' + esc(data) + '</textarea>';
+      var link = mail.length < 60000 ? '<a href="' + mail + '">✉️ ' + tt('Email the backup to myself') + '</a>' : '';
+      $('bArea').innerHTML = '<div class="note">' + tt(link ? 'Email this to yourself, or tap in the box, Select All, and Copy it somewhere safe (like Notes or an email).' : 'Your calendar is too big to email in one go. Tap in the box, Select All, and Copy it somewhere safe (like Notes or an email).') + '</div>' + link + '<textarea readonly id="bOut">' + esc(data) + '</textarea>';
     },
     bimport: function () {
-      $('bArea').innerHTML = '<div class="note">Paste a backup below, then tap Restore. This replaces everything on this iPad.</div><textarea id="bIn" placeholder="Paste backup here"></textarea><button class="wbtn red" data-act="brestore">Restore</button>';
+      $('bArea').innerHTML = '<div class="note">' + tt('Paste a backup below, then tap Restore. This replaces everything on this iPad.') + '</div><textarea id="bIn" placeholder="' + tt('Paste backup here') + '"></textarea><button class="wbtn red" data-act="brestore">' + tt('Restore') + '</button>';
     },
     brestore: function () {
       var txt = ($('bIn').value || '').replace(/^\s+|\s+$/g, ''), o = null;
       try { o = JSON.parse(txt); } catch (e) { o = null; }
-      if (!valid(o)) { toast('That doesn’t look like a calendar backup'); return; }
-      ask('Replace this calendar?', 'Everything on this iPad will be replaced with the ' + o.events.length + ' events in the backup.', [
-        { label: 'Restore Backup', cls: 'red', fn: function () { o.set = o.set || {}; db = o; save(); closeSheet(); view = db.set.view || 'month'; render(); toast('Backup restored'); } },
-        { label: 'Cancel', cls: 'bold' }]);
+      if (!valid(o)) { toast(tt('That doesn’t look like a calendar backup')); return; }
+      ask(tt('Replace this calendar?'), tt('Everything on this iPad will be replaced with the {n} {n:event|events} in the backup.', { n: o.events.length }), [
+        { label: tt('Restore Backup'), cls: 'red', fn: function () { o.set = o.set || {}; db = o; setLang(db.set.lang); save(); closeSheet(); view = db.set.view || 'month'; render(); toast(tt('Backup restored')); } },
+        { label: tt('Cancel'), cls: 'bold' }]);
     },
     askbtn: function (el) {
       var b = askBtns[+el.getAttribute('data-i')];

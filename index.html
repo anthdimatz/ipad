@@ -16,23 +16,54 @@ p{font-size:18px;color:#6C6C72;line-height:1.45;max-width:560px;margin:0 auto}
 .how{background:#fff;border-radius:18px;max-width:560px;margin:0 auto;padding:22px 26px;text-align:left}
 .how h2{font-size:20px;margin-bottom:10px}
 .how ol{padding-left:22px;font-size:17px;line-height:1.6}
+.app b{font-weight:700}
+.langs{margin:-30px 0 24px}
+.langs button{font:inherit;font-size:15px;font-weight:600;border:0;background:#fff;color:#1C1C1E;border-radius:16px;padding:7px 14px;margin:3px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.langs button.sel{background:#0A84FF;color:#fff}
 </style>
 </head>
 <body>
-<h1>Our iPad</h1>
-<p>Tap an app to open it.</p>
+<div class="langs" id="langs"></div>
+<h1 data-k="t">Our iPad</h1>
+<p data-k="tap">Tap an app to open it.</p>
 <div class="apps">
-  <a class="app" href="play.html"><img src="play-icon.png" alt="">Play Time<span>Drawing, flashcards &amp; games</span></a>
-  <a class="app" href="calendar.html"><img src="calendar-icon.png" alt="">Family Calendar<span>Colour-coded, repeating events</span></a>
+  <a class="app" href="play.html"><img src="play-icon.png" alt="">Play Time<span data-k="play">Drawing, flashcards &amp; games</span></a>
+  <a class="app" href="calendar.html"><img src="calendar-icon.png" alt=""><b data-k="cal">Family Calendar</b><span data-k="cals">Colour-coded, repeating events</span></a>
 </div>
 <div class="how">
-  <h2>Put it on the Home Screen</h2>
+  <h2 data-k="h">Put it on the Home Screen</h2>
   <ol>
-    <li>Open the app above.</li>
-    <li>Tap the Share button (the square with the arrow) at the top of Safari.</li>
-    <li>Tap <b>Add to Home Screen</b>, then <b>Add</b>.</li>
+    <li data-k="s1">Open the app above.</li>
+    <li data-k="s2">Tap the Share button (the square with the arrow) at the top of Safari.</li>
+    <li data-k="s3">Tap <b>Add to Home Screen</b>, then <b>Add</b>.</li>
   </ol>
-  <p style="text-align:left;margin-top:12px;font-size:15px">After the first visit, both apps keep working even without Wi-Fi.</p>
+  <p style="text-align:left;margin-top:12px;font-size:15px" data-k="off">After the first visit, both apps keep working even without Wi-Fi.</p>
 </div>
+<script>
+(function () {
+  var S = {
+    en: ['English', 'Our iPad', 'Tap an app to open it.', 'Drawing, flashcards &amp; games', 'Family Calendar', 'Colour-coded, repeating events', 'Put it on the Home Screen', 'Open the app above.', 'Tap the Share button (the square with the arrow) at the top of Safari.', 'Tap <b>Add to Home Screen</b>, then <b>Add</b>.', 'After the first visit, both apps keep working even without Wi-Fi. The language inside each app is chosen in its own settings.'],
+    fr: ['Français', 'Notre iPad', 'Touchez une app pour l’ouvrir.', 'Dessin, cartes et jeux', 'Calendrier familial', 'Couleurs et événements répétés', 'L’ajouter à l’écran d’accueil', 'Ouvrez l’app ci-dessus.', 'Touchez le bouton Partager (le carré avec la flèche) en haut de Safari.', 'Touchez <b>Sur l’écran d’accueil</b>, puis <b>Ajouter</b>.', 'Après la première visite, les deux apps fonctionnent même sans Wi-Fi. La langue de chaque app se choisit dans ses propres réglages.'],
+    es: ['Español', 'Nuestro iPad', 'Toca una app para abrirla.', 'Dibujo, tarjetas y juegos', 'Calendario familiar', 'Colores y eventos que se repiten', 'Añádela a la pantalla de inicio', 'Abre la app de arriba.', 'Toca el botón Compartir (el cuadrado con la flecha) arriba en Safari.', 'Toca <b>Añadir a pantalla de inicio</b> y luego <b>Añadir</b>.', 'Después de la primera visita, las dos apps funcionan incluso sin Wi-Fi. El idioma de cada app se elige en sus propios ajustes.'],
+    it: ['Italiano', 'Il nostro iPad', 'Tocca un’app per aprirla.', 'Disegno, carte e giochi', 'Calendario di famiglia', 'Colori ed eventi ripetuti', 'Mettila nella schermata Home', 'Apri l’app qui sopra.', 'Tocca il pulsante Condividi (il quadrato con la freccia) in alto in Safari.', 'Tocca <b>Aggiungi a Home</b>, poi <b>Aggiungi</b>.', 'Dopo la prima visita, le due app funzionano anche senza Wi-Fi. La lingua di ogni app si sceglie nelle sue impostazioni.'],
+    pt: ['Português', 'O nosso iPad', 'Toque numa app para a abrir.', 'Desenho, cartões e jogos', 'Calendário da família', 'Cores e eventos que se repetem', 'Pô-la no ecrã principal', 'Abra a app acima.', 'Toque no botão Partilhar (o quadrado com a seta) no topo do Safari.', 'Toque em <b>Adicionar ao ecrã principal</b> e depois em <b>Adicionar</b>.', 'Depois da primeira visita, as duas apps funcionam mesmo sem Wi-Fi. O idioma de cada app escolhe-se nas suas próprias definições.']
+  };
+  var K = ['t', 'tap', 'play', 'cal', 'cals', 'h', 's1', 's2', 's3', 'off'], order = ['en', 'fr', 'es', 'it', 'pt'];
+  function set(l) {
+    if (!S[l]) l = 'en';
+    var s = S[l], els = document.querySelectorAll('[data-k]'), i;
+    for (i = 0; i < els.length; i++) els[i].innerHTML = s[K.indexOf(els[i].getAttribute('data-k')) + 1];
+    var bs = document.querySelectorAll('#langs button');
+    for (i = 0; i < bs.length; i++) bs[i].className = bs[i].getAttribute('data-l') === l ? 'sel' : '';
+    try { localStorage.setItem('idx.lang', l); document.documentElement.lang = l; } catch (e) {}
+  }
+  var h = '';
+  for (var i = 0; i < order.length; i++) h += '<button data-l="' + order[i] + '">' + S[order[i]][0] + '</button>';
+  var box = document.getElementById('langs'); box.innerHTML = h;
+  box.onclick = function (e) { var l = e.target.getAttribute && e.target.getAttribute('data-l'); if (l) set(l); };
+  var saved = null; try { saved = localStorage.getItem('idx.lang'); } catch (e) {}
+  set(saved || (navigator.language || 'en').slice(0, 2));
+})();
+</script>
 </body>
 </html>
