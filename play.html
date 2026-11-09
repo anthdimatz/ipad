@@ -801,6 +801,21 @@ input{-webkit-user-select:text;user-select:text}
 <div class="ov center" id="saveOv"><div class="panel"><img id="saveimg" alt="Your picture"><div class="hint" data-th="Press and hold the picture, then tap <b>Save Image</b><br>to keep it in Photos.">Press and hold the picture, then tap <b>Save Image</b><br>to keep it in Photos.</div><button class="bigbtn blue" id="saveClose" data-t="Done">Done</button></div></div>
 
 <script>
+/* When a new version has been uploaded, switch to it right away instead of on the next launch. */
+(function () {
+  var ac = window.applicationCache;
+  if (!ac || !ac.addEventListener) return;
+  function busy() { return document.querySelector && document.querySelector('#grownOv.on, #mReward.on'); }
+  function swap() {
+    if (busy()) { setTimeout(swap, 2000); return; }
+    try { ac.swapCache(); } catch (e) {}
+    location.reload();
+  }
+  ac.addEventListener('updateready', swap, false);
+  if (ac.status === 4) swap();
+})();
+</script>
+<script>
 (function () {
   'use strict';
 
@@ -3846,6 +3861,7 @@ input{-webkit-user-select:text;user-select:text}
       h += '<button class="gbtn" data-ms="' + m.id + '" data-d="-1">−</button><button class="gbtn" data-ms="' + m.id + '" data-d="1">+</button></div>';
     }
     h += '<div class="gnote">' + T('Each Brain Games subject goes up a level after 4 right answers in a row, and steps back down if a level is too hard. In Rory’s missions, getting at least 3 stars (2 in Memory Match) unlocks the next level, and the reward screen offers it straight away. Use − and + to choose a level yourself. Progress is saved on this iPad.') + '</div>';
+    h += '<div class="gnote" style="text-align:center">Play Time · v9</div>';
     h += '<div style="text-align:center;margin-top:14px"><button class="bigbtn no" id="gReset">' + T('Reset') + '</button><button class="bigbtn blue" id="gDone">' + T('Done') + '</button></div>';
     body.innerHTML = h;
     ov.classList.add('on');

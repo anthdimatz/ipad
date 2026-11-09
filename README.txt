@@ -59,6 +59,14 @@ TIPS
     to see progress, set Brain Games and Rory levels yourself, change the language,
     and enter your child's name. The grown-ups page scrolls if it's taller than the screen.
 
+WHERE ARE LANGUAGE AND AGE?
+  Play Time: on the home screen, PRESS AND HOLD the lock (top-left corner) for about 2 seconds.
+    A tap only shows a hint. The "For grown-ups" page opens with Language and Age at the top.
+    The version number is at the bottom of that page (v9 or later).
+  Family Calendar: tap "Calendars" (top right), then Settings > Language.
+  Still the old version? Open the app, wait 10 seconds, close it completely
+  (swipe it away in the app switcher), then open it again.
+
 AGES AND WHAT EACH ONE COVERS (Play Time > press and hold the lock > Age)
   Choosing an age changes every learning part of Play Time. Progress is kept separately for each age,
   so you can switch back and forth without losing anything.
